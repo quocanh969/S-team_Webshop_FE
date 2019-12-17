@@ -6,7 +6,6 @@ export default class ProductGrid extends Component {
     render() {
         return (
             <div className="wrapper">
-              <Header></Header>
             <div className="clearfix">
             </div>
             <div className="container_fullwidth">
@@ -334,7 +333,7 @@ export default class ProductGrid extends Component {
                             <NavLink to="/productlist" className="list">
                               List
                             </NavLink>
-                            <NavLink to="/productgrid" className="grid active">
+                            <NavLink to="/productgird" className="grid active">
                               Grid
                             </NavLink>
                           </div>
@@ -393,9 +392,9 @@ export default class ProductGrid extends Component {
                         <div className="col-md-4 col-sm-6">
                           <div className="products">
                             <div className="thumbnail">
-                              <a href="details.html">
+                              <NavLink to="/detail">
                                 <img src="../Assets/images/products/small/products-05.png" alt="Product Name" />
-                              </a>
+                              </NavLink>
                             </div>
                             <div className="productname">
                               Iphone 5s Gold 32 Gb 2013
@@ -421,9 +420,9 @@ export default class ProductGrid extends Component {
                         <div className="col-md-4 col-sm-6">
                           <div className="products">
                             <div className="thumbnail">
-                              <a href="details.html">
+                              <NavLink to="/detail">
                                 <img src="../Assets/images/products/small/products-06.png" alt="Product Name" />
-                              </a>
+                              </NavLink>
                             </div>
                             <div className="productname">
                               Iphone 5s Gold 32 Gb 2013
@@ -452,9 +451,9 @@ export default class ProductGrid extends Component {
                               New
                             </div>
                             <div className="thumbnail">
-                              <a href="details.html">
+                              <NavLink to="/detail">
                                 <img src="../Assets/images/products/small/products-07.png" alt="Product Name" />
-                              </a>
+                              </NavLink>
                             </div>
                             <div className="productname">
                               Iphone 5s Gold 32 Gb 2013
@@ -480,9 +479,9 @@ export default class ProductGrid extends Component {
                         <div className="col-md-4 col-sm-6">
                           <div className="products">
                             <div className="thumbnail">
-                              <a href="details.html">
+                              <NavLink to="/detail">
                                 <img src="../Assets/images/products/small/products-05.png" alt="Product Name" />
-                              </a>
+                              </NavLink>
                             </div>
                             <div className="productname">
                               Iphone 5s Gold 32 Gb 2013
@@ -508,9 +507,9 @@ export default class ProductGrid extends Component {
                         <div className="col-md-4 col-sm-6">
                           <div className="products">
                             <div className="thumbnail">
-                              <a href="details.html">
+                              <NavLink to="/detail">
                                 <img src="../Assets/images/products/small/products-06.png" alt="Product Name" />
-                              </a>
+                              </NavLink>
                             </div>
                             <div className="productname">
                               Iphone 5s Gold 32 Gb 2013
@@ -539,9 +538,9 @@ export default class ProductGrid extends Component {
                               New
                             </div>
                             <div className="thumbnail">
-                              <a href="details.html">
+                              <NavLink to="/detail">
                                 <img src="../Assets/images/products/small/products-07.png" alt="Product Name" />
-                              </a>
+                              </NavLink>
                             </div>
                             <div className="productname">
                               Iphone 5s Gold 32 Gb 2013
@@ -567,9 +566,9 @@ export default class ProductGrid extends Component {
                         <div className="col-md-4 col-sm-6">
                           <div className="products">
                             <div className="thumbnail">
-                              <a href="details.html">
+                              <NavLink to="/detail">
                                 <img src="../Assets/images/products/small/products-05.png" alt="Product Name" />
-                              </a>
+                              </NavLink>
                             </div>
                             <div className="productname">
                               Iphone 5s Gold 32 Gb 2013
@@ -595,9 +594,9 @@ export default class ProductGrid extends Component {
                         <div className="col-md-4 col-sm-6">
                           <div className="products">
                             <div className="thumbnail">
-                              <a href="details.html">
+                              <NavLink to="/detail">
                                 <img src="../Assets/images/products/small/products-06.png" alt="Product Name" />
-                              </a>
+                              </NavLink>
                             </div>
                             <div className="productname">
                               Iphone 5s Gold 32 Gb 2013
@@ -626,9 +625,9 @@ export default class ProductGrid extends Component {
                               New
                             </div>
                             <div className="thumbnail">
-                              <a href="details.html">
+                              <NavLink to="/detail">
                                 <img src="../Assets/images/products/small/products-07.png" alt="Product Name" />
-                              </a>
+                              </NavLink>
                             </div>
                             <div className="productname">
                               Iphone 5s Gold 32 Gb 2013
@@ -660,7 +659,7 @@ export default class ProductGrid extends Component {
                             <NavLink to="/productlist" className="list">
                               List
                             </NavLink>
-                            <NavLink to="/productgrid" className="grid active">
+                            <NavLink to="/productgird" className="grid active">
                               Grid
                             </NavLink>
                           </div>

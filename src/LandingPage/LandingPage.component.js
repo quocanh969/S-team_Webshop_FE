@@ -9,9 +9,6 @@ class LandingPage extends React.Component {
 
 
       <div className="wrapper">
-        
-        <Header></Header>
-
         <div className="clearfix" />
         <div className="hom-slider">
           <div className="container">

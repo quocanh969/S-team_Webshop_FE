@@ -103,7 +103,7 @@ export default class Header extends Component {
                                                     <li><a href="home3.html">home3</a></li>                                                    
                                                     <li><NavLink to="/productlist">Productlist</NavLink></li>
                                                     <li><NavLink to="/productgird">Productgird</NavLink></li>
-                                                    <li><a href="details.html">Details</a></li>
+                                                    <li><NavLink to="/detail">Details</NavLink></li>
                                                     <li><a href="cart.html">Cart</a></li>
                                                     <li><a href="checkout.html">CheckOut</a></li>
                                                     <li><a href="checkout2.html">CheckOut2</a></li>

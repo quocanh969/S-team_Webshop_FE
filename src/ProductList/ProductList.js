@@ -6,9 +6,6 @@ export default class ProductList extends Component {
     render() {
         return (
             <div className="wrapper">
-                
-                <Header></Header>
-
                 <div className="clearfix">
                 </div>
                 <div className="container_fullwidth">

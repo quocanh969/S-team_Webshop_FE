@@ -5,9 +5,6 @@ export default class Contact extends Component {
     render() {
         return (
             <div className="wrapper">
-                
-                <Header></Header>
-
                 <div className="clearfix">
                 </div>
                 <div className="container_fullwidth">
