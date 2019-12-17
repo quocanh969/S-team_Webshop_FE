@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import '../Assets/css/style.css'
 
 class LandingPage extends React.Component {
@@ -105,7 +106,7 @@ class LandingPage extends React.Component {
                             <li><a href="home2.html">home2</a></li>
                             <li><a href="home3.html">home3</a></li>
                             <li><a href="productlitst.html">Productlitst</a></li>
-                            <li><a href="productgird.html">Productgird</a></li>
+                            <li><NavLink to="/productgird">Productgird</NavLink></li>
                             <li><a href="details.html">Details</a></li>
                             <li><a href="cart.html">Cart</a></li>
                             <li><a href="checkout.html">CheckOut</a></li>
@@ -114,39 +115,39 @@ class LandingPage extends React.Component {
                           </ul>
                         </div>
                       </li>
-                      <li><a href="productgird.html">men</a></li>
-                      <li><a href="productlitst.html">women</a></li>
+                      <li><NavLink to="/productgird">men</NavLink></li>
+                      <li><NavLink to="/productgird">women</NavLink></li>
                       <li className="dropdown">
                         <a href="#" className="dropdown-toggle" data-toggle="dropdown">Fashion</a>
                         <div className="dropdown-menu mega-menu">
                           <div className="row">
                             <div className="col-md-6 col-sm-6">
                               <ul className="mega-menu-links">
-                                <li><a href="productgird.html">New Collection</a></li>
-                                <li><a href="productgird.html">Shirts &amp; tops</a></li>
-                                <li><a href="productgird.html">Laptop &amp; Brie</a></li>
-                                <li><a href="productgird.html">Dresses</a></li>
-                                <li><a href="productgird.html">Blazers &amp; Jackets</a></li>
-                                <li><a href="productgird.html">Shoulder Bags</a></li>
+                                <li><NavLink to="/productgird">New Collection</NavLink></li>
+                                <li><NavLink to="/productgird">Shirts &amp; tops</NavLink></li>
+                                <li><NavLink to="/productgird">Laptop &amp; Brie</NavLink></li>
+                                <li><NavLink to="/productgird">Dresses</NavLink></li>
+                                <li><NavLink to="/productgird">Blazers &amp; Jackets</NavLink></li>
+                                <li><NavLink to="/productgird">Shoulder Bags</NavLink></li>
                               </ul>
                             </div>
                             <div className="col-md-6 col-sm-6">
                               <ul className="mega-menu-links">
-                                <li><a href="productgird.html">New Collection</a></li>
-                                <li><a href="productgird.html">Shirts &amp; tops</a></li>
-                                <li><a href="productgird.html">Laptop &amp; Brie</a></li>
-                                <li><a href="productgird.html">Dresses</a></li>
-                                <li><a href="productgird.html">Blazers &amp; Jackets</a></li>
-                                <li><a href="productgird.html">Shoulder Bags</a></li>
+                                <li><NavLink to="/productgird">New Collection</NavLink></li>
+                                <li><NavLink to="/productgird">Shirts &amp; tops</NavLink></li>
+                                <li><NavLink to="/productgird">Laptop &amp; Brie</NavLink></li>
+                                <li><NavLink to="/productgird">Dresses</NavLink></li>
+                                <li><NavLink to="/productgird">Blazers &amp; Jackets</NavLink></li>
+                                <li><NavLink to="/productgird">Shoulder Bags</NavLink></li>
                               </ul>
                             </div>
                           </div>
                         </div>
                       </li>
-                      <li><a href="productgird.html">gift</a></li>
-                      <li><a href="productgird.html">kids</a></li>
-                      <li><a href="productgird.html">blog</a></li>
-                      <li><a href="productgird.html">jewelry</a></li>
+                      <li><NavLink to="/productgird">gift</NavLink></li>
+                      <li><NavLink to="/productgird">kids</NavLink></li>
+                      <li><NavLink to="/productgird">blog</NavLink></li>
+                      <li><NavLink to="/productgird">jewelry</NavLink></li>
                       <li><a href="contact.html">contact us</a></li>
                     </ul>
                   </div>
