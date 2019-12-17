@@ -8,6 +8,8 @@ import ProductList from './ProductList/ProductList';
 import Detail from './Detail/Detail';
 
 import Header from './Helper/Header';
+import Cart from './Cart/Cart';
+import Checkout from './Checkout/Checkout';
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
           <Route path="/productgird" exact component={ProductGrid}></Route>  
           <Route path="/productlist" exact component={ProductList}></Route>    
           <Route path="/detail" exact component={Detail}></Route>    
+          <Route path="/cart" exact component={Cart}></Route>   
+          <Route path="/checkout" exact component={Checkout}></Route>   
           <Redirect to='/home' />        
         </Switch>
       </BrowserRouter>
