@@ -1,0 +1,445 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="Nhom14_WebShopModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="admins">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="banking_cards">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_user" Type="int" />
+          <Property Name="cardNum" Type="int" />
+          <Property Name="type" Type="int" />
+        </EntityType>
+        <EntityType Name="categories">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="nvarchar" MaxLength="20" />
+          <Property Name="parent_id" Type="int" />
+          <Property Name="status" Type="bit" />
+        </EntityType>
+        <EntityType Name="employees">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6013: The table/view 'Nhom14_WebShop.dbo.invoiceDetails' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="invoiceDetails">
+          <Property Name="id_product" Type="int" />
+          <Property Name="id_invoice" Type="int" />
+          <Property Name="quantity" Type="int" />
+          <Property Name="singlePrice" Type="float" />
+        </EntityType>-->
+        <EntityType Name="invoices">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_customer" Type="int" />
+          <Property Name="status" Type="int" />
+          <Property Name="createDate" Type="date" />
+          <Property Name="estimatedDeliveryDate" Type="date" />
+          <Property Name="total" Type="float" />
+        </EntityType>
+        <EntityType Name="products">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_category" Type="int" />
+          <Property Name="name" Type="nvarchar" MaxLength="20" />
+          <Property Name="imgUrl" Type="varchar(max)" />
+          <Property Name="description" Type="varchar(max)" />
+          <Property Name="price" Type="float" />
+          <Property Name="status" Type="int" />
+        </EntityType>
+        <EntityType Name="users">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="email" Type="nchar" MaxLength="50" />
+          <Property Name="password" Type="nchar" MaxLength="30" />
+          <Property Name="dial" Type="nchar" MaxLength="11" />
+          <Property Name="address" Type="varchar" MaxLength="255" />
+          <Property Name="status" Type="bit" />
+          <Property Name="type" Type="int" />
+        </EntityType>
+        <Association Name="FK__admins__id__173876EA">
+          <End Role="users" Type="Self.users" Multiplicity="1" />
+          <End Role="admins" Type="Self.admins" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="users">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="admins">
+              <PropertyRef Name="id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__banking_c__id_us__1BFD2C07">
+          <End Role="users" Type="Self.users" Multiplicity="0..1" />
+          <End Role="banking_cards" Type="Self.banking_cards" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="users">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="banking_cards">
+              <PropertyRef Name="id_user" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__employees__id__145C0A3F">
+          <End Role="users" Type="Self.users" Multiplicity="1" />
+          <End Role="employees" Type="Self.employees" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="users">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="employees">
+              <PropertyRef Name="id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <!--Errors Found During Generation:
+error 6004: The table 'Nhom14_WebShop.dbo.invoiceDetails' is referenced by a relationship, but cannot be found.
+        <Association Name="FK__invoiceDe__id_in__267ABA7A" />-->
+        <!--Errors Found During Generation:
+error 6004: The table 'Nhom14_WebShop.dbo.invoiceDetails' is referenced by a relationship, but cannot be found.
+        <Association Name="FK__invoiceDe__id_pr__25869641" />-->
+        <Association Name="FK__invoices__id_cus__239E4DCF">
+          <End Role="users" Type="Self.users" Multiplicity="0..1" />
+          <End Role="invoices" Type="Self.invoices" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="users">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="invoices">
+              <PropertyRef Name="id_customer" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__products__id_cat__20C1E124">
+          <End Role="categories" Type="Self.categories" Multiplicity="0..1" />
+          <End Role="products" Type="Self.products" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="categories">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="products">
+              <PropertyRef Name="id_category" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="Nhom14_WebShopModelStoreContainer">
+          <EntitySet Name="admins" EntityType="Self.admins" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="banking_cards" EntityType="Self.banking_cards" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="categories" EntityType="Self.categories" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="employees" EntityType="Self.employees" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="invoices" EntityType="Self.invoices" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="products" EntityType="Self.products" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="users" EntityType="Self.users" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__admins__id__173876EA" Association="Self.FK__admins__id__173876EA">
+            <End Role="users" EntitySet="users" />
+            <End Role="admins" EntitySet="admins" />
+          </AssociationSet>
+          <AssociationSet Name="FK__banking_c__id_us__1BFD2C07" Association="Self.FK__banking_c__id_us__1BFD2C07">
+            <End Role="users" EntitySet="users" />
+            <End Role="banking_cards" EntitySet="banking_cards" />
+          </AssociationSet>
+          <AssociationSet Name="FK__employees__id__145C0A3F" Association="Self.FK__employees__id__145C0A3F">
+            <End Role="users" EntitySet="users" />
+            <End Role="employees" EntitySet="employees" />
+          </AssociationSet>
+          <AssociationSet Name="FK__invoices__id_cus__239E4DCF" Association="Self.FK__invoices__id_cus__239E4DCF">
+            <End Role="users" EntitySet="users" />
+            <End Role="invoices" EntitySet="invoices" />
+          </AssociationSet>
+          <AssociationSet Name="FK__products__id_cat__20C1E124" Association="Self.FK__products__id_cat__20C1E124">
+            <End Role="categories" EntitySet="categories" />
+            <End Role="products" EntitySet="products" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="Nhom14_WebShopModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="admin">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="user" Relationship="Self.FK__admins__id__173876EA" FromRole="admins" ToRole="users" />
+        </EntityType>
+        <EntityType Name="banking_cards">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id_user" Type="Int32" />
+          <Property Name="cardNum" Type="Int32" />
+          <Property Name="type" Type="Int32" />
+          <NavigationProperty Name="user" Relationship="Self.FK__banking_c__id_us__1BFD2C07" FromRole="banking_cards" ToRole="users" />
+        </EntityType>
+        <EntityType Name="category">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="parent_id" Type="Int32" />
+          <Property Name="status" Type="Boolean" />
+          <NavigationProperty Name="products" Relationship="Self.FK__products__id_cat__20C1E124" FromRole="categories" ToRole="products" />
+        </EntityType>
+        <EntityType Name="employee">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="user" Relationship="Self.FK__employees__id__145C0A3F" FromRole="employees" ToRole="users" />
+        </EntityType>
+        <EntityType Name="invoice">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id_customer" Type="Int32" />
+          <Property Name="status" Type="Int32" />
+          <Property Name="createDate" Type="DateTime" Precision="0" />
+          <Property Name="estimatedDeliveryDate" Type="DateTime" Precision="0" />
+          <Property Name="total" Type="Double" />
+          <NavigationProperty Name="user" Relationship="Self.FK__invoices__id_cus__239E4DCF" FromRole="invoices" ToRole="users" />
+        </EntityType>
+        <EntityType Name="product">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id_category" Type="Int32" />
+          <Property Name="name" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="imgUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="price" Type="Double" />
+          <Property Name="status" Type="Int32" />
+          <NavigationProperty Name="category" Relationship="Self.FK__products__id_cat__20C1E124" FromRole="products" ToRole="categories" />
+        </EntityType>
+        <EntityType Name="user">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="email" Type="String" MaxLength="50" FixedLength="true" Unicode="true" />
+          <Property Name="password" Type="String" MaxLength="30" FixedLength="true" Unicode="true" />
+          <Property Name="dial" Type="String" MaxLength="11" FixedLength="true" Unicode="true" />
+          <Property Name="address" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="status" Type="Boolean" />
+          <Property Name="type" Type="Int32" />
+          <NavigationProperty Name="admin" Relationship="Self.FK__admins__id__173876EA" FromRole="users" ToRole="admins" />
+          <NavigationProperty Name="banking_cards" Relationship="Self.FK__banking_c__id_us__1BFD2C07" FromRole="users" ToRole="banking_cards" />
+          <NavigationProperty Name="employee" Relationship="Self.FK__employees__id__145C0A3F" FromRole="users" ToRole="employees" />
+          <NavigationProperty Name="invoices" Relationship="Self.FK__invoices__id_cus__239E4DCF" FromRole="users" ToRole="invoices" />
+        </EntityType>
+        <Association Name="FK__admins__id__173876EA">
+          <End Role="users" Type="Self.user" Multiplicity="1" />
+          <End Role="admins" Type="Self.admin" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="users">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="admins">
+              <PropertyRef Name="id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__banking_c__id_us__1BFD2C07">
+          <End Role="users" Type="Self.user" Multiplicity="0..1" />
+          <End Role="banking_cards" Type="Self.banking_cards" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="users">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="banking_cards">
+              <PropertyRef Name="id_user" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__products__id_cat__20C1E124">
+          <End Role="categories" Type="Self.category" Multiplicity="0..1" />
+          <End Role="products" Type="Self.product" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="categories">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="products">
+              <PropertyRef Name="id_category" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__employees__id__145C0A3F">
+          <End Role="users" Type="Self.user" Multiplicity="1" />
+          <End Role="employees" Type="Self.employee" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="users">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="employees">
+              <PropertyRef Name="id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__invoices__id_cus__239E4DCF">
+          <End Role="users" Type="Self.user" Multiplicity="0..1" />
+          <End Role="invoices" Type="Self.invoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="users">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="invoices">
+              <PropertyRef Name="id_customer" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="Nhom14_WebShopEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="admins" EntityType="Self.admin" />
+          <EntitySet Name="banking_cards" EntityType="Self.banking_cards" />
+          <EntitySet Name="categories" EntityType="Self.category" />
+          <EntitySet Name="employees" EntityType="Self.employee" />
+          <EntitySet Name="invoices" EntityType="Self.invoice" />
+          <EntitySet Name="products" EntityType="Self.product" />
+          <EntitySet Name="users" EntityType="Self.user" />
+          <AssociationSet Name="FK__admins__id__173876EA" Association="Self.FK__admins__id__173876EA">
+            <End Role="users" EntitySet="users" />
+            <End Role="admins" EntitySet="admins" />
+          </AssociationSet>
+          <AssociationSet Name="FK__banking_c__id_us__1BFD2C07" Association="Self.FK__banking_c__id_us__1BFD2C07">
+            <End Role="users" EntitySet="users" />
+            <End Role="banking_cards" EntitySet="banking_cards" />
+          </AssociationSet>
+          <AssociationSet Name="FK__products__id_cat__20C1E124" Association="Self.FK__products__id_cat__20C1E124">
+            <End Role="categories" EntitySet="categories" />
+            <End Role="products" EntitySet="products" />
+          </AssociationSet>
+          <AssociationSet Name="FK__employees__id__145C0A3F" Association="Self.FK__employees__id__145C0A3F">
+            <End Role="users" EntitySet="users" />
+            <End Role="employees" EntitySet="employees" />
+          </AssociationSet>
+          <AssociationSet Name="FK__invoices__id_cus__239E4DCF" Association="Self.FK__invoices__id_cus__239E4DCF">
+            <End Role="users" EntitySet="users" />
+            <End Role="invoices" EntitySet="invoices" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="Nhom14_WebShopModelStoreContainer" CdmEntityContainer="Nhom14_WebShopEntities">
+          <EntitySetMapping Name="admins">
+            <EntityTypeMapping TypeName="Nhom14_WebShopModel.admin">
+              <MappingFragment StoreEntitySet="admins">
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="banking_cards">
+            <EntityTypeMapping TypeName="Nhom14_WebShopModel.banking_cards">
+              <MappingFragment StoreEntitySet="banking_cards">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="id_user" ColumnName="id_user" />
+                <ScalarProperty Name="cardNum" ColumnName="cardNum" />
+                <ScalarProperty Name="type" ColumnName="type" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="categories">
+            <EntityTypeMapping TypeName="Nhom14_WebShopModel.category">
+              <MappingFragment StoreEntitySet="categories">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="parent_id" ColumnName="parent_id" />
+                <ScalarProperty Name="status" ColumnName="status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="employees">
+            <EntityTypeMapping TypeName="Nhom14_WebShopModel.employee">
+              <MappingFragment StoreEntitySet="employees">
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="invoices">
+            <EntityTypeMapping TypeName="Nhom14_WebShopModel.invoice">
+              <MappingFragment StoreEntitySet="invoices">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="id_customer" ColumnName="id_customer" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="createDate" ColumnName="createDate" />
+                <ScalarProperty Name="estimatedDeliveryDate" ColumnName="estimatedDeliveryDate" />
+                <ScalarProperty Name="total" ColumnName="total" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="products">
+            <EntityTypeMapping TypeName="Nhom14_WebShopModel.product">
+              <MappingFragment StoreEntitySet="products">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="id_category" ColumnName="id_category" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="imgUrl" ColumnName="imgUrl" />
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="price" ColumnName="price" />
+                <ScalarProperty Name="status" ColumnName="status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="users">
+            <EntityTypeMapping TypeName="Nhom14_WebShopModel.user">
+              <MappingFragment StoreEntitySet="users">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="password" ColumnName="password" />
+                <ScalarProperty Name="dial" ColumnName="dial" />
+                <ScalarProperty Name="address" ColumnName="address" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="type" ColumnName="type" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
