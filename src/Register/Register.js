@@ -1,111 +1,142 @@
-import React, { Component } from 'react'
+import React from 'react';
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import TextField from '@material-ui/core/TextField';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import Link from '@material-ui/core/Link';
+import Grid from '@material-ui/core/Grid';
+import Box from '@material-ui/core/Box';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/core/styles';
+import Container from '@material-ui/core/Container';
 
-export default class Register extends Component {
-    role = 0;
-    user = {
-        password: '',
-        name: '',
-        email: '',
-        yob: 1980,
-        role: 0,
-        gender: 0,
-        address: '',
-        phone: '',
-    }
-
-    constructor(props) {
-        super(props);
-
-        this.handleSubmit = this.handleSubmit.bind(this); // handle submit
-        this.handleChange = this.handleChange.bind(this);
-        this.handleRoleChange = this.handleRoleChange.bind(this);
-    }
-
-    componentDidMount()
-    {
-        document.body.scrollTop = 0;
-    }
-
-    handleChange(e) {
-        this.user[e.target.name] = e.target.value;
-    }
-
-    handleRoleChange(e) {
-        this.role = e.target.value;
-    }
-
-    handleSubmit(e) {
-        e.preventDefault();
-
-
-        // let { onNormalLogin } = this.props;
-        // onNormalLogin({
-        //     username: this.user.username,
-        //     password: this.user.password,
-        //     role: this.role,
-        // });
-
-    }
-
-    render() {
-        return (
-            <div>
-                <div className="container mt-5">
-                    {/* Outer Row */}
-                    <div className="row justify-content-center">
-                        <div className="card o-hidden border-0 shadow-lg my-5">
-                            <div className="card-body p-0">
-                                {/* Nested Row within Card Body */}
-                                <div className="row">
-                                    <div className="col-12">
-                                        <div className="p-5">
-                                            <div className="text-center">
-                                                <h1 className="h4 mb-4 font-weight-bold text-white">Join with us !</h1>
-                                            </div>
-                                            
-                                            <hr className='border-light'/>
-                                            <form className="user" onSubmit={this.handleSubmit}>
-                                                <div className="form-group">
-                                                    <input type="email" onChange={this.handleChange} required className="form-control" id="username" name="username" placeholder="Email" />
-                                                </div>
-                                                <div className="form-group row">
-                                                    <div className="col-sm-6 mb-3 mb-sm-0">
-                                                        <input type="password" minLength="7" required onChange={this.handleChange} className="form-control " id="password" name="password" placeholder="Password" />
-                                                    </div>
-                                                    <div className="col-sm-6">
-                                                        <input type="password" minLength="7" required className="form-control " id="confirm" ref="confirm" name="confirm" placeholder="Confirm Password" />
-                                                    </div>
-                                                </div>
-                                                <div className="form-group">
-                                                    <input type="text" minLength="10" required onChange={this.handleChange} className="form-control " id="address" name="address" placeholder="Address" />
-                                                </div>
-                                                <div className="form-group">
-                                                    <input type="tel" pattern="[0-9+]{10,11}" required onChange={this.handleChange} className="form-control " id="phone" name="phone" placeholder="Phone number" />
-                                                </div>
-                                                <hr className='border-light'/>
-                                                {/* {this.generateNotice()} */}
-                                                <button type="submit" className="btn btn-primary w-100 font-weight-bold font-20 mt-5">
-                                                    Register
-                                                </button>
-                                            </form>
-                                          
-                                            <div className="text-center">
-                                                {/* <NavLink className="small" to="/register">Sign up as a learner!</NavLink> */}
-                                            </div>
-                                            <div className="text-center">
-                                                {/* <NavLink className="small" to="/tutorRegister">Sign up as a tutor!</NavLink> */}
-                                            </div>
-                                            <div className="text-center">
-                                                {/* <NavLink className="small" to="/forgot-password">Forgot password?</NavLink> */}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        )
-    }
+function Copyright() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {'Copyright © '}
+      <Link color="inherit" href="https://material-ui.com/">
+        Your Website
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
 }
+
+const useStyles = makeStyles(theme => ({
+  paper: {
+    marginTop: theme.spacing(8),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main,
+  },
+  form: {
+    width: '100%', // Fix IE 11 issue.
+    marginTop: theme.spacing(3),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+}));
+
+function Register() {
+  const classes = useStyles();
+
+  return (
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <div className={classes.paper}>
+        <Avatar className={classes.avatar}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Sign up
+        </Typography>
+        <form className={classes.form} noValidate>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                autoComplete="fname"
+                name="firstName"
+                variant="outlined"
+                required
+                fullWidth
+                id="firstName"
+                label="First Name"
+                autoFocus
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="lastName"
+                label="Last Name"
+                name="lastName"
+                autoComplete="lname"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={<Checkbox value="allowExtraEmails" color="primary" />}
+                label="I want to receive inspiration, marketing promotions and updates via email."
+              />
+            </Grid>
+          </Grid>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+          >
+            Sign Up
+          </Button>
+          <Grid container justify="flex-end">
+            <Grid item>
+              <Link href="#" variant="body2">
+                Already have an account? Sign in
+              </Link>
+            </Grid>
+          </Grid>
+        </form>
+      </div>
+      <Box mt={5}>
+        <Copyright />
+      </Box>
+    </Container>
+  );
+}
+
+export default Register;
