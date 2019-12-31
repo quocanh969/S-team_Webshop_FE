@@ -56,7 +56,10 @@ export default class Header extends Component {
                             <div className="header_bottom">
                                 <ul className="option">
                                     <li id="search" className="search">
-                                        <form><input className="search-submit" type="submit" defaultValue /><input className="search-input" placeholder="Enter your search term..." type="text" defaultValue name="search" /></form>
+                                        <form>
+                                            <input className="search-submit"/>
+                                        {/* <input className="search-input" placeholder="Enter your search term..." type="text" defaultValue name="search" /> */}
+                                        </form>
                                     </li>
                                     <li className="option-cart">
                                         <a href="#" className="cart-icon">cart <span className="cart_no">02</span></a>

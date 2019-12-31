@@ -1,4 +1,5 @@
 import React from 'react';
+import './App.css';
 
 import { BrowserRouter, Switch,Route, Redirect } from 'react-router-dom';
 
@@ -10,6 +11,8 @@ import Detail from './Detail/Detail';
 import Header from './Helper/Header';
 import Cart from './Cart/Cart';
 import Checkout from './Checkout/Checkout';
+import Login from './Login/Login';
+import Register from './Register/Register';
 
 function App() {
   return (
@@ -17,6 +20,8 @@ function App() {
       <BrowserRouter>
         <Header></Header>
         <Switch>
+          <Route path="/login" exact component={Login}></Route>
+          <Route path='/register' exact component={Register}></Route>
           <Route path="/home" exact component={LandingPageContainer}></Route> 
           <Route path="/productgird" exact component={ProductGrid}></Route>  
           <Route path="/productlist" exact component={ProductList}></Route>    
