@@ -8,8 +8,6 @@ import ProductGrid from './ProductGrid/ProductGrid';
 import ProductList from './ProductList/ProductList';
 import Detail from './Detail/Detail';
 
-import Login from './Login/Login';
-import Register from './Register/Register';
 
 import Header from './Helper/Header';
 import Cart from './Cart/Cart';

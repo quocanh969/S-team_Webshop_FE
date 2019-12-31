@@ -4,7 +4,11 @@ import { NavLink } from 'react-router-dom';
 export default class Header extends Component {
     render() {
       console.log(window.location.pathname);
-      if (window.location.pathname !== '/login' || window.location.pathname !== '/register')
+      if (window.location.pathname === '/login' || window.location.pathname === '/register')
+      {
+        return null;
+      }
+      else
       {
         console.log(window.location.pathname);
         return (
@@ -151,7 +155,6 @@ export default class Header extends Component {
             </div>
 
         )
-      }
-      return null;
+      }   
     }
 }
