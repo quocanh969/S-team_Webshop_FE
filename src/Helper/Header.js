@@ -3,6 +3,10 @@ import { NavLink } from 'react-router-dom';
 
 export default class Header extends Component {
     render() {
+      console.log(window.location.pathname);
+      if (window.location.pathname !== '/login' || window.location.pathname !== '/register')
+      {
+        console.log(window.location.pathname);
         return (
             <div className="header">
                 <div className="container">
@@ -46,8 +50,8 @@ export default class Header extends Component {
                                     </div>
                                     <div className="col-md-3">
                                         <ul className="usermenu">
-                                            <li><a href="checkout.html" className="log">Login</a></li>
-                                            <li><a href="checkout2.html" className="reg">Register</a></li>
+                                            <li><a href="/login" className="log">Login</a></li>
+                                            <li><a href="/register" className="reg">Register</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -100,7 +104,7 @@ export default class Header extends Component {
                                                 <ul className="mega-menu-links">
                                                     <li><a href="index.html">home</a></li>
                                                     <li><a href="home2.html">home2</a></li>
-                                                    <li><a href="home3.html">home3</a></li>                                                    
+                                                    <li><a href="home3.html">home3</a></li>
                                                     <li><NavLink to="/productlist">Productlist</NavLink></li>
                                                     <li><NavLink to="/productgird">Productgird</NavLink></li>
                                                     <li><NavLink to="/detail">Details</NavLink></li>
@@ -144,5 +148,7 @@ export default class Header extends Component {
             </div>
 
         )
+      }
+      return null;
     }
 }
