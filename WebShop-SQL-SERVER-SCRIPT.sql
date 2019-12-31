@@ -25,22 +25,21 @@ create table admins (
 create table banking_cards (
 	id int identity primary key,
     id_user int unique,
-    cardNum int unique,
+    cardNum bigint unique,
     type int,
     foreign key (id_user) references users (id)
 );
 
 create table categories (
 	id int identity primary key,
-    name nvarchar(20),
-    parent_id int,
-    status bit
+    name nvarchar(30),
+    status bit,
 );
 
 create table products (
 	id int identity primary key,
     id_category int,
-    name nvarchar(20),
+    name nvarchar(50),
     imgUrl varchar(max),
     description varchar(max),
     price float,
