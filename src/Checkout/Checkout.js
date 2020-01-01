@@ -205,28 +205,15 @@ export default class Checkout extends Component {
                                         <h5>
                                         New Customer
                                         </h5>
-                                        <label>
-                                        <span className="input-radio">
-                                            <input type="radio" name="user" />
-                                        </span>
-                                        <span className="text">
-                                            I wish to subscribe to the Herbal Store newsletter.
-                                        </span>
-                                        </label>
-                                        <label>
-                                        <span className="input-radio">
-                                            <input type="radio" name="user" />
-                                        </span>
-                                        <span className="text">
-                                            My delivery and billing addresses are the same.
-                                        </span>
-                                        </label>
-                                        <p className="requir">
-                                        By creating an account you will be able to shop faste be up to date on an order's status, and keep track of the orders you have previously made.
+                                        <p>
+                                        In order to checkout with your cart, you need to log in to your account.
                                         </p>
-                                        <button>
-                                        Continue
-                                        </button>
+                                        <h5>
+                                        Have not got an account yet? Sign up now
+                                        </h5>
+                                        <a className="font-20" href="/register">
+                                        Register
+                                        </a>
                                     </div>
                                     </div>
                                     <div className="col-md-6 col-sm-6">
@@ -269,7 +256,7 @@ export default class Checkout extends Component {
                             </li>
                             <li className="steps">
                                 <a href="checkout2.html" className="step-title">
-                                02. billing information
+                                02. billing information and delivery
                                 </a>
                                 <div className="step-description">
                                     <form>
@@ -277,170 +264,62 @@ export default class Checkout extends Component {
                                         <div className="col-md-6 col-sm-6">
                                             <div className="your-details">
                                             <h5>
-                                                Your Persional Details
+                                               Card information
                                             </h5>
                                             <div className="form-row">
                                                 <label className="lebel-abs">
-                                                First Name 
-                                                <strong className="red">
-                                                    *
-                                                </strong>
+                                                    Card number
+                                                    {/* <strong className="red">*</strong> */}
                                                 </label>
-                                                <input type="text" className="input namefild" name />
+                                                <input type="text" className="input namefild" readOnly name></input>
                                             </div>
                                             <div className="form-row">
                                                 <label className="lebel-abs">
-                                                Last Name 
-                                                <strong className="red">
-                                                    *
-                                                </strong>
+                                                   CSV
+                                                    <strong className="red">*</strong>
                                                 </label>
-                                                <input type="text" className="input namefild" name />
+                                                <input type="text" className="input namefild" name></input>
                                             </div>
+                                            <label className="lebel-abs">
+                                                    Good through
+                                                <strong className="red">*</strong>
+                                            </label>
                                             <div className="form-row">
-                                                <label className="lebel-abs">
-                                                Email 
-                                                <strong className="red">
-                                                    *
-                                                </strong>
-                                                </label>
-                                                <input type="text" className="input namefild" name />
+                                                <input type="number" className="width-40" placeholder="Month" pattern="[0-9]{1,2}" min="1" max="12" required></input>
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <input type="number" className="width-40" placeholder="Year" pattern="[0-9]{4}" min="2000" max="2050" required></input>
                                             </div>
-                                            <div className="form-row">
-                                                <label className="lebel-abs">
-                                                Telephone 
-                                                <strong className="red">
-                                                    *
-                                                </strong>
-                                                </label>
-                                                <input type="text" className="input namefild" name />
-                                            </div>
-                                            <div className="form-row">
-                                                <label className="lebel-abs">
-                                                Fax 
-                                                <strong className="red">
-                                                    *
-                                                </strong>
-                                                </label>
-                                                <input type="text" className="input namefild" name />
-                                            </div>
-                                            <div className="form-row">
-                                                <label className="lebel-abs">
-                                                Company 
-                                                <strong className="red">
-                                                    *
-                                                </strong>
-                                                </label>
-                                                <input type="text" className="input namefild" name />
-                                            </div>
-                                            <div className="pass-wrap">
-                                                <div className="form-row">
-                                                <label className="lebel-abs">
-                                                    Your Password 
-                                                    <strong className="red">
-                                                    *
-                                                    </strong>
-                                                </label>
-                                                <input type="password" className="input namefild" name />
-                                                </div>
-                                                <div className="form-row">
-                                                <label className="lebel-abs">
-                                                    Confird Your Password 
-                                                    <strong className="red">
-                                                    *
-                                                    </strong>
-                                                </label>
-                                                <input type="password" className="input cpass" name />
-                                                </div>
-                                            </div>
-                                            <p>
-                                                <span className="input-radio">
-                                                <input type="radio" name="user" />
-                                                </span>
-                                                <span className="text">
-                                                I wish to subscribe to the Herbal Store newsletter.
-                                                </span>
-                                            </p>
-                                            <p>
-                                                <span className="input-radio">
-                                                <input type="radio" name="user" />
-                                                </span>
-                                                <span className="text">
-                                                My delivery and billing addresses are the same.
-                                                </span>
-                                            </p>
                                             </div>
                                         </div>
                                         <div className="col-md-6 col-sm-6">
                                             <div className="your-details">
                                             <h5>
-                                                Your Address
+                                                Delivery
                                             </h5>
                                             <div className="form-row">
                                                 <label className="lebel-abs">
-                                                Address 01 
-                                                <strong className="red">
-                                                    *
-                                                </strong>
+                                                Delivery fee 
                                                 </label>
-                                                <input type="text" className="input namefild" name />
+                                                <input type="text" className="input namefild" name readOnly/>
                                             </div>
                                             <div className="form-row">
                                                 <label className="lebel-abs">
-                                                Address 02
+                                                Estimated date of arrival
+                                                </label>
+                                                <input type="text" className="input namefild" name readOnly/>
+                                            </div>
+                                            <label className="lebel-abs">
+                                                Deelivery option
                                                 <strong className="red">
                                                     *
                                                 </strong>
-                                                </label>
-                                                <input type="text" className="input namefild" name />
-                                            </div>
+                                            </label>
                                             <div className="form-row">
-                                                <label className="lebel-abs">
-                                                City 
-                                                <strong className="red">
-                                                    *
-                                                </strong>
-                                                </label>
-                                                <input type="text" className="input namefild" name />
+                                                <select className="width-40 no-margin" defaultValue="0">
+                                                    <option value="0">Standard</option>
+                                                    <option value="1">Express</option>
+                                                </select> 
                                             </div>
-                                            <div className="form-row">
-                                                <label className="lebel-abs">
-                                                Pass Code 
-                                                <strong className="red">
-                                                    *
-                                                </strong>
-                                                </label>
-                                                <input type="text" className="input namefild" name />
-                                            </div>
-                                            <div className="form-row">
-                                                <label className="lebel-abs">
-                                                Country 
-                                                <strong className="red">
-                                                    *
-                                                </strong>
-                                                </label>
-                                                <input type="text" className="input namefild" name />
-                                            </div>
-                                            <div className="form-row">
-                                                <label className="lebel-abs">
-                                                Region / State 
-                                                <strong className="red">
-                                                    *
-                                                </strong>
-                                                </label>
-                                                <input type="text" className="input namefild" name />
-                                            </div>
-                                            <p className="privacy">
-                                                <span className="input-radio">
-                                                <input type="radio" name="user" />
-                                                </span>
-                                                <span className="text">
-                                                I have read and agree to the 
-                                                <a href="#" className="red">
-                                                    Privacy Policy
-                                                </a>
-                                                </span>
-                                            </p>
                                             <button>
                                                 Continue
                                             </button>
@@ -451,7 +330,7 @@ export default class Checkout extends Component {
                                     </div>
 
                             </li>
-                            <li className="steps">
+                            {/* <li className="steps">
                                 <a href="checkout2.html" className="step-title">
                                 03. Shipping information
                                 </a>
@@ -465,11 +344,43 @@ export default class Checkout extends Component {
                                 <a href="#" className="step-title">
                                 05. payment information 
                                 </a>
-                            </li>
+                            </li> */}
                             <li className="steps">
                                 <a href="#" className="step-title">
-                                06. oder review
+                                03. oder review
                                 </a>
+                                <div className="step-description">
+                                    <form>
+                                        <div className="row">
+                                        <div className="col-md-6 col-sm-6">
+                                            <div className="your-details">
+                                            <h5>
+                                               Total price
+                                            </h5>
+                                            <div className="form-row">
+                                                <input type="text" className="input namefild" readOnly name></input>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6 col-sm-6">
+                                            <div className="your-details">
+                                            <h5>
+                                                Delivery
+                                            </h5>
+                                            <div className="form-row">
+                                                <label className="lebel-abs">
+                                                Estimated date of arrival
+                                                </label>
+                                                <input type="text" className="input namefild" name readOnly/>
+                                            </div>
+                                            <button>
+                                                Confirm
+                                            </button>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </form>
+                                    </div>
                             </li>
                             </ol>
                         </div>

@@ -22,3 +22,17 @@
 .font-15 {
     font-size: 15px;
 }
+
+.width-40 {
+    width: 40%;
+}
+
+.left-50 {
+    left: 50%;
+    position: absolute;
+    top: 12px;
+}
+
+.no-margin {
+    margin-left: 0px;
+}
