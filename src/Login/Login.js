@@ -1,133 +1,88 @@
-import React from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
-import Paper from '@material-ui/core/Paper';
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
+import React, { Component } from 'react';
+import { NavLink } from 'react-router-dom';
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+export default class Login extends Component {
+  role = 0;
+  user = {
+    username: '',
+    password: '',
+  }
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    height: '100vh',
-  },
-  image: {
-    backgroundImage: 'url(https://source.unsplash.com/random)',
-    backgroundRepeat: 'no-repeat',
-    backgroundColor:
-      theme.palette.type === 'dark' ? theme.palette.grey[900] : theme.palette.grey[50],
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-  },
-  paper: {
-    margin: theme.spacing(8, 4),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
+  constructor(props) {
+    super(props);
 
-function Login() {
-  const classes = useStyles();
+    this.handleSubmit = this.handleSubmit.bind(this); // handle submit
+    this.handleChange = this.handleChange.bind(this);
+    this.handleRoleChange = this.handleRoleChange.bind(this);
+  }
 
-  return (
-    <Grid container component="main" className={classes.root}>
-      <CssBaseline />
-      <Grid item xs={false} sm={4} md={7} className={classes.image} />
-      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-        <div className={classes.paper}>
-          <Avatar className={classes.avatar}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Sign in
-          </Typography>
-          <form className={classes.form} noValidate>
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-            >
-              Sign In
-            </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
-            </Grid>
-            <Box mt={5}>
-              <Copyright />
-            </Box>
-          </form>
+  componentDidMount() {
+    document.body.scrollTop = 0;
+  }
+
+  handleChange(e) {
+    this.user[e.target.name] = e.target.value;
+  }
+
+  handleRoleChange(e) {
+    this.role = e.target.value;
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+
+
+    let { onNormalLogin } = this.props;
+    onNormalLogin({
+      username: this.user.username,
+      password: this.user.password,
+      role: this.role,
+    });
+
+  }
+
+  render() {
+    return (
+      <div>
+        <div className="container mt-5">
+          {/* Outer Row */}
+          <div className="row justify-content-center">
+            <div className="col-xl-10 col-lg-12 col-md-9">
+              <div className="card o-hidden border-0 my-5">
+                <div className="card-body p-0">
+                  {/* Nested Row within Card Body */}
+                  <div className="row">
+                    <div className="col-12">
+                      <div className="p-5">
+                        <div className="text-center">
+                          <h1 className="h4 mb-4 font-weight-bold text-light">Welcome to SHOP!</h1>
+                        </div>
+
+                        <hr className='border-light'/>
+                        <form className="user" onSubmit={this.handleSubmit}>
+                          <div className="form-group">
+                            <input type="email" onChange={this.handleChange} required className="form-control" id="username" name="username" placeholder="Email" />
+                          </div>
+                          <div className="form-group">
+                            <input type="password" onChange={this.handleChange} required className="form-control" id="password" name="password" placeholder="Password" />
+                          </div>
+                          <button type="submit" className="btn btn-primary btn-user btn-block font-weight-bold font-20">
+                            Login
+                          </button>
+                        </form>
+                        <hr className='border-light'/>
+                        <div className="text-center mt-3">
+                          <NavLink className="text-white font-20" to="/register">Joint us!</NavLink>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </Grid>
-    </Grid>
-  );
-};
-
-export default Login;
+      </div>
+    )
+  }
+}
