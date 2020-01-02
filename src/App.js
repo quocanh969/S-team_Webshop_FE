@@ -1,7 +1,9 @@
 import React from 'react';
 import './App.css';
 
-import { BrowserRouter, Switch,Route, Redirect } from 'react-router-dom';
+import { Router, Switch,Route, Redirect } from 'react-router-dom';
+import { history } from './History/history';
+import { IsLogInRoute } from './Route/CustomeRoute';
 
 import LandingPageContainer from './LandingPage/LandingPage.container';
 import ProductGrid from './ProductGrid/ProductGrid';
@@ -16,29 +18,30 @@ import Login from './Login/Login';
 import Register from './Register/Register';
 
 import Profile from './Profile/Profile';
+import Footer from './Helper/Footer';
 
 function App() {
   return (
     <div>
-      <BrowserRouter>
+      <Router history={history}>
         <Header></Header>
         <div style={{marginTop: 170}}>
           <Switch>
             <Route path="/home" exact component={LandingPageContainer}></Route>
             <Route path="/login" exact component={Login}></Route>
             <Route path="/register" exact component={Register}></Route> 
-            <Route path="/profile" exact component={Profile}></Route> 
+            <IsLogInRoute path="/profile" exact component={Profile}></IsLogInRoute> 
             <Route path="/productgird" exact component={ProductGrid}></Route>
             <Route path="/productgird" exact component={ProductGrid}></Route>
             <Route path="/productlist" exact component={ProductList}></Route>
             <Route path="/detail" exact component={Detail}></Route>
             <Route path="/cart" exact component={Cart}></Route>
-            <Route path="/checkout" exact component={Checkout}></Route>
+            <IsLogInRoute path="/checkout" exact component={Checkout}></IsLogInRoute>
             <Redirect to='/home' />
           </Switch>
         </div>
-        
-      </BrowserRouter>
+        <Footer></Footer>
+      </Router>
     </div>
   );
 }

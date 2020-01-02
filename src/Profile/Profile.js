@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
+import { storage } from '../Firebase/firebase';
 
 import '../Detail.css';
 
 export default class Profile extends Component {
     user = {
+        name: 'Trần Quốc Anh',
         email: 'tranquocanh858@gmail.com',
         dial: '0123456789',
         address: 'Thành phố Hồ Chí Minh, VietNam',
@@ -16,9 +18,68 @@ export default class Profile extends Component {
 
         this.state = {
             tab: 1,
+            isEditting: false,
+            isBakingEditting: false,
         }
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
+    componentDidMount() {
+        this.onReset();
+    }
+
+    handleChange(e)
+    {
+        this.user[e.target.name] = e.target.value;
+        
+    }
+
+    handleSubmit(e)
+    {
+        e.preventDefault();
+        // ls.updateLearnerDetail(this.tempUser)
+        // .then(res=>{
+        //     this.tempUser.isEditting = false;
+        //     this.setState({user: this.tempUser});
+        // })
+        // .catch(err=>{
+        //     console.log(err);
+        // })
+        console.log(this.user);
+    }
+
+    
+    handleChangeAvatar(e)
+    {
+        this.image = e.target.files[0];
+        const uploadTask = storage.ref(`learner-avatar/${this.state.user.id}-${this.state.user.name}/${this.image.name}`).put(this.image);
+
+        uploadTask.on('state_changed',
+        ()=>{},
+        (error)=>{
+            alert('Upload image to server host get error ...');
+        },
+        ()=>{ // hoàn thành việc upload
+            storage.ref(`learner-avatar/${this.state.user.id}-${this.state.user.name}`).child(this.image.name).getDownloadURL()
+            .then(
+                (url)=>{                                           
+                    this.tempUser.avatarLink = url;
+                    this.setState({user: this.tempUser});
+                }
+            )
+        })
+    }
+
+
+    onReset()
+    {     
+        this.refs.name.value = this.user.name;
+        this.refs.email.value = this.user.email;
+        this.refs.phone.value = this.user.dial;
+        this.refs.address.value = this.user.address;
+    }
 
     render() {
         var accountInfoClass = "";        
@@ -58,27 +119,27 @@ export default class Profile extends Component {
             invoiceInfoClass = 'tab-pane show active';
         }
 
-        let disableVal = false;
-        // if(this.state.user.isEditting) disableVal = false;
-        // else disableVal = true;
+        let disableVal = true;
+        if(this.state.isEditting) disableVal = false;
+        else disableVal = true;
 
         return (
             <div className="container emp-profile bg-dark">
                 <form ref='editProfileForm' onSubmit={this.handleSubmit}>
                     <div className="row">
                         
-                        <div className="col-md-4">
-                            <div className="profile-img mb-5">
+                        <div className="col-md-4 mb-3">
+                            <div className="profile-img mb-3">
                                 <img src={ImgSrc}
                                     alt="avatar-user" />
                                 <input type="file" name="file" ref="imgInput" className="d-none" onChange={this.handleChangeAvatar}/>
-                                {/* {this.state.user.isEditting ?
+                                {this.state.isEditting ?
                                     <div className="file btn btn-lg btn-primary cursor-pointer"
                                         onClick={() => { this.refs.imgInput.click() }}>
                                         Change Photo
                                     </div>
                                 : ''
-                                } */}
+                                }
                                 
                             </div>
                         </div>
@@ -95,34 +156,36 @@ export default class Profile extends Component {
                                         </h6>
                                     </div>
                                     <div className='col-4'>
-                                        {false ? 
+                                        {this.state.isEditting ? 
                                             <div className='d-flex justify-content-between'>
                                                 <button className='btn btn-success h-100 w-49 font-weight-bold'
                                                         type='submit'>
                                                     <i className="fa fa-save my-auto"></i>&nbsp;&nbsp;| Save
                                                 </button>
-                                                <button className='btn btn-dark h-100 w-49 font-weight-bold'                                                        
-                                                        // onClick={e=>{   
-                                                        //     e.preventDefault();      
-                                                        //     this.tempUser.isEditting = false;        
-                                                        //     let temp = this.state.user;                                                             
-                                                        //     temp.isEditting = false;                                                            
-                                                        //     this.setState({user: temp});
-                                                        //     this.onReset();
-                                                        // }}>
-                                                        >
+                                                <button className='btn btn-secondary h-100 w-49 font-weight-bold'                                                        
+                                                        onClick={e=>{   
+                                                            e.preventDefault(); 
+                                                            //this.setState({isEditting: true})     
+                                                            // this.tempUser.isEditting = false;        
+                                                            // let temp = this.state.user;                                                             
+                                                            // temp.isEditting = false;                                                            
+                                                            // this.setState({user: temp});
+                                                            this.onReset();
+                                                        }}>
+                                                        
                                                     <i className="fa fa-times my-auto"></i>&nbsp;&nbsp;| Exit
                                                 </button>
                                             </div>
                                         :   <button className='btn btn-secondary h-100 w-100 font-weight-bold' 
-                                                    // onClick={e=>{
-                                                    //     e.preventDefault();
-                                                    //     this.tempUser.isEditting = true;
-                                                    //     let temp = this.state.user;                         
-                                                    //     temp.isEditting = true;
-                                                    //     this.setState({user: temp});
-                                                    // }}>
-                                                    >
+                                                    onClick={e=>{
+                                                        e.preventDefault();
+                                                        this.setState({isEditting: true})
+                                                        // this.tempUser.isEditting = true;
+                                                        // let temp = this.state.user;                         
+                                                        // temp.isEditting = true;
+                                                        // this.setState({user: temp});
+                                                    }}>
+                                                    
                                                 <i className="fa fa-pencil-alt my-auto"></i>&nbsp;&nbsp;| Edit Profile !!!
                                             </button>
                                         }
@@ -206,15 +269,33 @@ export default class Profile extends Component {
                                             <div className="col-2 text-center">
                                                 <i className="fa fa-credit-card mx-1 p-3 bg-grey rounded-circle" style={{fontSize: 30}}></i>
                                             </div>
-                                            <div className="col-10">
-                                                <div className="row my-2">
-                                                    <div className='col-3 font-weight-bold font-15'>Card Number:</div>
-                                                    <div className='col-9 font-weight-bold font-15'>0125354984651</div>
+                                            <div className="col-7">
+                                                <div className="row my-2 align-items-center">
+                                                    <div className='col-5 font-weight-bold font-15'>Card Number:</div>
+                                                    {/* <input className='col-7 font-weight-bold font-15' /> */}
+                                                    <div className='col-7 font-weight-bold font-15'>012345678925</div>
                                                 </div>
-                                                <div className="row my-3">
-                                                    <div className='col-3 font-weight-bold font-15'>Card Type:</div>
-                                                    <div className='col-9 font-weight-bold font-15'>Visa</div>
+                                                <div className="row my-3 align-items-center">
+                                                    <div className='col-5 font-weight-bold font-15'>Card Type:</div>
+                                                    <div className='col-7 font-weight-bold font-15'>Visa</div>
                                                 </div>
+                                            </div>
+                                            <div className='col-3'>
+                                                {/* {this.state.isBakingEditting
+                                                ?
+                                                <div className='d-flex justify-content-around'>
+                                                    <div className='btn btn-success cursor-pointer'>
+                                                        Save
+                                                    </div>
+                                                    <div className='btn btn-secondary cursor-pointer'>
+                                                        Exit
+                                                    </div>
+                                                </div>
+                                                :
+                                                <div className='btn btn-danger cursor-pointer'>
+                                                    Edit
+                                                </div>
+                                                } */}
                                             </div>
                                         </div>
                                     
@@ -224,14 +305,14 @@ export default class Profile extends Component {
                                             <div className="col-2 text-center">
                                                 <i className="fa fa-id-card mx-1 p-3 bg-grey rounded-circle" style={{fontSize: 30}}></i>
                                             </div>
-                                            <div className="col-10">
+                                            <div className="col-7">
                                                 <div className="row my-2">
-                                                    <div className='col-3 font-weight-bold font-15'>Card Number:</div>
-                                                    <div className='col-9 font-weight-bold font-15'>0125354984651</div>
+                                                    <div className='col-5 font-weight-bold font-15'>Card Number:</div>
+                                                    <div className='col-7 font-weight-bold font-15'>0125354984651</div>
                                                 </div>
                                                 <div className="row my-3">
-                                                    <div className='col-3 font-weight-bold font-15'>Card Type:</div>
-                                                    <div className='col-9 font-weight-bold font-15'>Visa</div>
+                                                    <div className='col-5 font-weight-bold font-15'>Card Type:</div>
+                                                    <div className='col-7 font-weight-bold font-15'>Visa</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -242,14 +323,14 @@ export default class Profile extends Component {
                                             <div className="col-2 text-center">
                                                 <i className="fa fa-address-card mx-1 p-3 bg-grey rounded-circle" style={{fontSize: 30}}></i>
                                             </div>
-                                            <div className="col-10">
+                                            <div className="col-7">
                                                 <div className="row my-2">
-                                                    <div className='col-3 font-weight-bold font-15'>Card Number:</div>
-                                                    <div className='col-9 font-weight-bold font-15'>0125354984651</div>
+                                                    <div className='col-5 font-weight-bold font-15'>Card Number:</div>
+                                                    <div className='col-7 font-weight-bold font-15'>0125354984651</div>
                                                 </div>
                                                 <div className="row my-3">
-                                                    <div className='col-3 font-weight-bold font-15'>Card Type:</div>
-                                                    <div className='col-9 font-weight-bold font-15'>Visa</div>
+                                                    <div className='col-5 font-weight-bold font-15'>Card Type:</div>
+                                                    <div className='col-7 font-weight-bold font-15'>Visa</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -308,7 +389,7 @@ export default class Profile extends Component {
                                                 <div className='col-3 font-weight-bold'>
                                                     Total:
                                                 </div>
-                                                <div className='col-9'>
+                                                <div className='col-9 text-danger font-weight-bold'>
                                                     $ 100000
                                                 </div>
                                             </div>
@@ -360,7 +441,7 @@ export default class Profile extends Component {
                                                 <div className='col-3 font-weight-bold'>
                                                     Total:
                                                 </div>
-                                                <div className='col-9'>
+                                                <div className='col-9 text-danger font-weight-bold'>
                                                     $ 100000
                                                 </div>
                                             </div>
@@ -412,7 +493,7 @@ export default class Profile extends Component {
                                                 <div className='col-3 font-weight-bold'>
                                                     Total:
                                                 </div>
-                                                <div className='col-9'>
+                                                <div className='col-9 text-danger font-weight-bold'>
                                                     $ 100000
                                                 </div>
                                             </div>

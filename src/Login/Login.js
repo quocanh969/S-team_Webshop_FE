@@ -33,7 +33,7 @@ export default class Login extends Component {
   render() {
     return (
       <div>
-        <div className="container mt-5">
+        <div className="container">
           {/* Outer Row */}
           <div className="row justify-content-center">
             <div className="col-xl-10 col-lg-12 col-md-9">

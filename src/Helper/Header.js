@@ -1,6 +1,7 @@
 /* eslint-disable */
 import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
+import { history } from '../History/history';
 
 export default class Header extends Component {
     user;
@@ -21,7 +22,7 @@ export default class Header extends Component {
                     <NavLink to="/login" className="btn btn-outline-light border-width-2px font-weight-bold">
                         <i className="fa fa-lock mr-2"></i>LOG IN
                     </NavLink>
-                    <NavLink to="/login" className="btn btn-outline-light border-width-2px font-weight-bold">
+                    <NavLink to="/register" className="btn btn-outline-light border-width-2px font-weight-bold">
                         <i className="fa fa-key mr-2"></i>REGISTER
                     </NavLink>                                            
                 </div>
@@ -89,14 +90,14 @@ export default class Header extends Component {
                             User
                         </button>                    
                         <div className="dropdown-menu dropdown-menu-right">
-                            <div className="dropdown-item label px-2 text-black cursor-pointer" onClick={() => {history.push('/profile');}}>
+                            <div className="dropdown-item label px-2 text-black cursor-pointer font-15" onClick={() => {history.push('/profile');}}>
                                 <i className="fa fa-info-circle mr-2"></i>Your Account
                             </div>
-                            <div className="dropdown-item label px-2 text-black cursor-pointer" onClick={() => {history.push('/change-password');}}>
+                            <div className="dropdown-item label px-2 text-black cursor-pointer font-15" onClick={() => {history.push('/change-password');}}>
                                 <i className="fa fa-file-signature mr-2"></i>Change Password
                             </div>
                             <hr className="my-0 mx-1"/>
-                            <div className="dropdown-item label px-2 text-black cursor-pointer" onClick={() => {localStorage.clear();window.location.href = './';}}>
+                            <div className="dropdown-item label px-2 text-black cursor-pointer font-15" onClick={() => {localStorage.clear();window.location.href = './';}}>
                                 <i className="fa fa-sign-out-alt mr-2"></i>Sign Out
                             </div>
                         </div>
@@ -107,17 +108,10 @@ export default class Header extends Component {
     }
 
     render() {
-        
-      if (window.location.pathname === '/login' || window.location.pathname === '/register')
-      {
-        return null;
-      }
-      else
-      {
         return (
             <div className='fixed-top'>
                 <nav className="navbar navbar-dark bg-dark mb-0">
-                    <a className="navbar-brand font-weight-bold" href="/">UBER TUTOR</a>
+                    <NavLink className="navbar-brand font-weight-bold" to="/home">S-TEAM Shop</NavLink>
                     
                     <div className="form-inline w-50 text-center">
                         <div className="input-group w-100">
@@ -322,6 +316,5 @@ export default class Header extends Component {
             // </div>
 
         )
-      }   
     }
 }

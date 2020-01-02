@@ -88,17 +88,3 @@ input,select {
     padding: 5px 20px;
 }
   
-input:disabled {
-    background-color: transparent;
-    border-width: 0;
-
-    padding: 5px 0px;
-}
-
-select:disabled {
-    background-color: transparent;
-    border-width: 0;    
-    appearance: none;
-
-    padding: 5px 0px;
-}
