@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 export default class Login extends Component {
   role = 0;
   user = {
-    username: '',
+    email: '',
     password: '',
   }
 
@@ -13,7 +13,6 @@ export default class Login extends Component {
 
     this.handleSubmit = this.handleSubmit.bind(this); // handle submit
     this.handleChange = this.handleChange.bind(this);
-    this.handleRoleChange = this.handleRoleChange.bind(this);
   }
 
   componentDidMount() {
@@ -24,20 +23,10 @@ export default class Login extends Component {
     this.user[e.target.name] = e.target.value;
   }
 
-  handleRoleChange(e) {
-    this.role = e.target.value;
-  }
-
   handleSubmit(e) {
     e.preventDefault();
 
-
-    let { onNormalLogin } = this.props;
-    onNormalLogin({
-      username: this.user.username,
-      password: this.user.password,
-      role: this.role,
-    });
+    console.log(this.user);
 
   }
 
@@ -55,13 +44,13 @@ export default class Login extends Component {
                     <div className="col-12">
                       <div className="p-5">
                         <div className="text-center">
-                          <h1 className="h4 mb-4 font-weight-bold text-light">Welcome to SHOP!</h1>
+                          <h1 className="h4 mb-4 font-weight-bold text-white">Welcome to SHOP!</h1>
                         </div>
 
                         <hr className='border-light'/>
                         <form className="user" onSubmit={this.handleSubmit}>
                           <div className="form-group">
-                            <input type="email" onChange={this.handleChange} required className="form-control" id="username" name="username" placeholder="Email" />
+                            <input type="email" onChange={this.handleChange} required className="form-control" id="email" name="email" placeholder="Email" />
                           </div>
                           <div className="form-group">
                             <input type="password" onChange={this.handleChange} required className="form-control" id="password" name="password" placeholder="Password" />

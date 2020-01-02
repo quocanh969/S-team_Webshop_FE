@@ -79,7 +79,7 @@ export default class Register extends Component {
                     </form>
                     <hr className='border-light'></hr>
                     <div className="text-center">
-                      <NavLink className="text-white" to="/login">Already have an account? Login!</NavLink>
+                      <NavLink className="text-white font-15" to="/login">Already have an account? Login!</NavLink>
                     </div>
                   </div>
                 </div>
