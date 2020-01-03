@@ -1,1035 +1,210 @@
 /* eslint-disable */
 import React, { Component } from 'react'
+import { ProductSer } from '../Services/ProductService';
 
 export default class Detail extends Component {
+    
+    cart = [];
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            product: {
+                id: 0,
+                id_category: 0,
+                name: '',
+                imgUrl: '',
+                description: '',
+                price: 0,
+                status: 0,
+                categoryName: '',
+            },
+            productInSameCate: [],
+            quantity: 0,
+        }
+
+        if(JSON.parse(localStorage.getItem('cart')) === null)
+        {
+            this.cart = [];
+            localStorage.setItem('cart',JSON.stringify(this.cart));
+            
+        }
+        else
+        {
+            this.cart = JSON.parse(localStorage.getItem('cart'));
+        }
+    }
+
+    componentDidMount() {
+        let id = this.props.match.params.id;
+        this.initData(id);
+    }
+
+    initData(id) {
+        ProductSer.getProdutById(id)
+            .then(res => {
+                if (res.code === 1) {
+                    this.setState({
+                        product: res.info.data[0],
+                    })
+                    this.initProductInSameCate(res.info.data[0].id_category);
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
+
+    initProductInSameCate(id) {
+        ProductSer.getProductByCategory(id)
+            .then(res => {
+                console.log('same category');
+                console.log(res);
+                if (res.code === 1) {
+                    let temp = res.info.data.slice(0, 3);
+                    this.setState({
+                        productInSameCate: temp,
+                    })
+                    console.log(this.state.productInSameCate);
+                }
+                else {
+                    console.log(res.info.message);
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
+
+    handleQuantityChange(e) {
+        this.setState({
+            quantity: e.target.value,
+        })
+    }
+
+    generateProductSameCate() {
+        let content = [];
+        for (let e of this.state.productInSameCate) {
+            content.push(
+                <div className="col-md-4 col-sm-4">
+                    <div className="products">
+                        <div className="thumbnail">
+                            <img src={e.imgUrl} alt="Product Name" style={{width:180}}/>
+                        </div>
+                        <div className="productname">
+                            {e.name}
+                        </div>
+                        <h4 className="price">
+                            $&nbsp;{e.price}
+                        </h4>
+                        <div className="button_group">
+                            <button className="button add-cart" onClick={e=>{e.preventDefault();this.addToCart(e, 1);}}>
+                                Add To Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        return content;
+    }
+
+    addToCart(product, quantity) {
+        this.cart.push({
+            id_product: product.id,
+            imgUrl: product.imgUrl,
+            name: product.name,
+            price: product.price, 
+            quantity: quantity,
+            description: product.description,
+        });
+        localStorage.setItem('cart',JSON.stringify(this.cart));
+        let {updateCartLength} = this.props;
+        updateCartLength();
+        alert('Successfull add product tor cart');
+    }
+
     render() {
         return (
             <div className="wrapper">
                 <div className="clearfix">
                 </div>
                 <div className="container_fullwidth">
-                <div className="container">
-                    <div className="row">
-                    <div className="col-md-9">
-                        <div className="products-details">
-                        <div className="preview_image">
-                            <div className="preview-small">
-                            <img id="zoom_03" src="images/products/medium/products-01.jpg" data-zoom-image="images/products/Large/products-01.jpg" alt="" />
-                            </div>
-                            <div className="thum-image">
-                            <ul id="gallery_01" className="prev-thum">
-                                <li>
-                                <a href="#" data-image="images/products/medium/products-01.jpg" data-zoom-image="images/products/Large/products-01.jpg">
-                                     ets/images/products/thum/products-01.png" alt="" />
-                                </a>
-                                </li>
-                                <li>
-                                <a href="#" data-image="images/products/medium/products-02.jpg" data-zoom-image="images/products/Large/products-02.jpg">
-                                    <img src="../Assets/images/products/thum/products-02.png" alt="" />
-                                </a>
-                                </li>
-                                <li>
-                                <a href="#" data-image="images/products/medium/products-03.jpg" data-zoom-image="images/products/Large/products-03.jpg">
-                                    <img src="../Assets/images/products/thum/products-03.png" alt="" />
-                                </a>
-                                </li>
-                                <li>
-                                <a href="#" data-image="images/products/medium/products-04.jpg" data-zoom-image="images/products/Large/products-04.jpg">
-                                    <img src="../Assets/images/products/thum/products-04.png" alt="" />
-                                </a>
-                                </li>
-                                <li>
-                                <a href="#" data-image="images/products/medium/products-05.jpg" data-zoom-image="images/products/Large/products-05.jpg">
-                                    <img src="../Assets/images/products/thum/products-05.png" alt="" />
-                                </a>
-                                </li>
-                            </ul>
-                            <a className="control-left" id="thum-prev" href="javascript:void(0);">
-                                <i className="fa fa-chevron-left">
-                                </i>
-                            </a>
-                            <a className="control-right" id="thum-next" href="javascript:void(0);">
-                                <i className="fa fa-chevron-right">
-                                </i>
-                            </a>
-                            </div>
-                        </div>
-                        <div className="products-description">
-                            <h5 className="name">
-                            Lincoln Corner Unit Products
-                            </h5>
-                            <p>
-                            <img alt="" src="images/star.png" />
-                            <a className="review_num" href="#">
-                                02 Review(s)
-                            </a>
-                            </p>
-                            <p>
-                            Availability: 
-                            <span className=" light-red">
-                                In Stock
-                            </span>
-                            </p>
-                            <p>
-                            Proin lectus ipsum, gravida et mattis vulputate, tristique ut lectus. Sed et lorem nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrie ces posuere cubilia curae. Proin lectus ipsum, gravida etds mattis vulps utate, tristique ut lectus. Sed et lorem nunc...
-                            </p>
-                            <hr className="border" />
-                            <div className="price">
-                            Price : 
-                            <span className="new_price">
-                                450.00
-                                <sup>
-                                $
-                                </sup>
-                            </span>
-                            <span className="old_price">
-                                450.00
-                                <sup>
-                                $
-                                </sup>
-                            </span>
-                            </div>
-                            <hr className="border" />
-                            <div className="wided">
-                            <div className="qty">
-                                Qty &nbsp;&nbsp;: 
-                                <select>
-                                <option>
-                                    1
-                                </option>
-                                </select>
-                            </div>
-                            <div className="button_group">
-                                <button className="button">
-                                Add To Cart
-                                </button>
-                                <button className="button compare">
-                                <i className="fa fa-exchange">
-                                </i>
-                                </button>
-                                <button className="button favorite">
-                                <i className="fa fa-heart-o">
-                                </i>
-                                </button>
-                                <button className="button favorite">
-                                <i className="fa fa-envelope-o">
-                                </i>
-                                </button>
-                            </div>
-                            </div>
-                            <div className="clearfix">
-                            </div>
-                            <hr className="border" />
-                            <img src="../Assets/images/share.png" alt="" className="pull-right" />
-                        </div>
-                        </div>
-                        <div className="clearfix">
-                        </div>
-                        <div className="tab-box">
-                        <div id="tabnav">
-                            <ul>
-                            <li>
-                                <a href="#Descraption">
-                                DESCRIPTION
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#Reviews">
-                                REVIEW
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#tags">
-                                PRODUCT TAGS
-                                </a>
-                            </li>
-                            </ul>
-                        </div>
-                        <div className="tab-content-wrap">
-                            <div className="tab-content" id="Descraption">
-                            <p>
-                                Proin lectus ipsum, gravida et mattis vulputate, tristique ut lectus. Sed et lorem nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultri ces posuere cubilia curae Aenean eleifend laoreet congue. Proin lectus ipsum, gravida et mattis vulputate, tristique ut lectus. Sed et lorem nunc. Vestibu um ante ipsum primis in faucibus orci luctus et ultri ces posuere cubilia curae Aenean eleifend laoreet congue. Proin lectus ipsum, gravida et mattis vulputate, tristique ut lectus. Sed et lorem nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultri ces posuere cubilia curae Aenean eleifend laoreet congue. Proin lectus ipsum, gravida et mattis vulputate, tristique ut lectus. Sed et lorem nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultri ces posuere cubilia curae...
-                            </p>
-                            <p>
-                                Proin lectus ipsum, gravida et mattis vulputate, tristique ut lectus. Sed et lorem nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultri ces posuere cubilia curae Aenean eleifend laoreet congue. Proin lectus ipsum, gravida et mattis vulputate, tristique ut lectus. Sed et lorem nunc. Vestibu um ante ipsum primis in faucibus orci luctus et ultri ces posuere cubilia curae Aenean eleifend laoreet congue. Proin lectus ipsum, gravida et mattis vulputate, tristique ut lectus. Sed et lorem nunc...
-                            </p>
-                            </div>
-                            <div className="tab-content" id="Reviews">
-                            <form>
-                                <table>
-                                <thead>
-                                    <tr>
-                                    <th>
-                                        &nbsp;
-                                    </th>
-                                    <th>
-                                        1 star
-                                    </th>
-                                    <th>
-                                        2 stars
-                                    </th>
-                                    <th>
-                                        3 stars
-                                    </th>
-                                    <th>
-                                        4 stars
-                                    </th>
-                                    <th>
-                                        5 stars
-                                    </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                    <td>
-                                        Quality
-                                    </td>
-                                    <td>
-                                        <input type="radio" name="quality" defaultValue="Blue" />
-                                    </td>
-                                    <td>
-                                        <input type="radio" name="quality" defaultValue />
-                                    </td>
-                                    <td>
-                                        <input type="radio" name="quality" defaultValue />
-                                    </td>
-                                    <td>
-                                        <input type="radio" name="quality" defaultValue />
-                                    </td>
-                                    <td>
-                                        <input type="radio" name="quality" defaultValue />
-                                    </td>
-                                    </tr>
-                                    <tr>
-                                    <td>
-                                        Price
-                                    </td>
-                                    <td>
-                                        <input type="radio" name="price" defaultValue />
-                                    </td>
-                                    <td>
-                                        <input type="radio" name="price" defaultValue />
-                                    </td>
-                                    <td>
-                                        <input type="radio" name="price" defaultValue />
-                                    </td>
-                                    <td>
-                                        <input type="radio" name="price" defaultValue />
-                                    </td>
-                                    <td>
-                                        <input type="radio" name="price" defaultValue />
-                                    </td>
-                                    </tr>
-                                    <tr>
-                                    <td>
-                                        Value
-                                    </td>
-                                    <td>
-                                        <input type="radio" name="value" defaultValue />
-                                    </td>
-                                    <td>
-                                        <input type="radio" name="value" defaultValue />
-                                    </td>
-                                    <td>
-                                        <input type="radio" name="value" defaultValue />
-                                    </td>
-                                    <td>
-                                        <input type="radio" name="value" defaultValue />
-                                    </td>
-                                    <td>
-                                        <input type="radio" name="value" defaultValue />
-                                    </td>
-                                    </tr>
-                                </tbody>
-                                </table>
-                                <div className="row">
-                                <div className="col-md-6 col-sm-6">
-                                    <div className="form-row">
-                                    <label className="lebel-abs">
-                                        Your Name 
-                                        <strong className="red">
-                                        *
-                                        </strong>
-                                    </label>
-                                    <input type="text" name className="input namefild" />
-                                    </div>
-                                    <div className="form-row">
-                                    <label className="lebel-abs">
-                                        Your Email 
-                                        <strong className="red">
-                                        *
-                                        </strong>
-                                    </label>
-                                    <input type="email" name className="input emailfild" />
-                                    </div>
-                                    <div className="form-row">
-                                    <label className="lebel-abs">
-                                        Summary of You Review 
-                                        <strong className="red">
-                                        *
-                                        </strong>
-                                    </label>
-                                    <input type="text" name className="input summeryfild" />
-                                    </div>
-                                </div>
-                                <div className="col-md-6 col-sm-6">
-                                    <div className="form-row">
-                                    <label className="lebel-abs">
-                                        Your Name 
-                                        <strong className="red">
-                                        *
-                                        </strong>
-                                    </label>
-                                    <textarea className="input textareafild" name rows={7} defaultValue={"                            "} />
-                                    </div>
-                                    <div className="form-row">
-                                    <input type="submit" defaultValue="Submit" className="button" />
-                                    </div>
-                                </div>
-                                </div>
-                            </form>
-                            </div>
-                            <div className="tab-content">
-                            <div className="review">
-                                <p className="rating">
-                                <i className="fa fa-star light-red">
-                                </i>
-                                <i className="fa fa-star light-red">
-                                </i>
-                                <i className="fa fa-star light-red">
-                                </i>
-                                <i className="fa fa-star-half-o gray">
-                                </i>
-                                <i className="fa fa-star-o gray">
-                                </i>
-                                </p>
-                                <h5 className="reviewer">
-                                Reviewer name
-                                </h5>
-                                <p className="review-date">
-                                Date: 01-01-2014
-                                </p>
-                                <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer a eros neque. In sapien est, malesuada non interdum id, cursus vel neque.
-                                </p>
-                            </div>
-                            <div className="review">
-                                <p className="rating">
-                                <i className="fa fa-star light-red">
-                                </i>
-                                <i className="fa fa-star light-red">
-                                </i>
-                                <i className="fa fa-star light-red">
-                                </i>
-                                <i className="fa fa-star-half-o gray">
-                                </i>
-                                <i className="fa fa-star-o gray">
-                                </i>
-                                </p>
-                                <h5 className="reviewer">
-                                Reviewer name
-                                </h5>
-                                <p className="review-date">
-                                Date: 01-01-2014
-                                </p>
-                                <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer a eros neque. In sapien est, malesuada non interdum id, cursus vel neque.
-                                </p>
-                            </div>
-                            </div>
-                            <div className="tab-content" id="tags">
-                            <div className="tag">
-                                Add Tags : 
-                                <input type="text" name />
-                                <input type="submit" defaultValue="Tag" />
-                            </div>
-                            </div>
-                        </div>
-                        </div>
-                        <div className="clearfix">
-                        </div>
-                        <div id="productsDetails" className="hot-products">
-                        <h3 className="title">
-                            <strong>
-                            Hot
-                            </strong>
-                            Products
-                        </h3>
-                        <div className="control">
-                            <a id="prev_hot" className="prev" href="#">
-                            &lt;
-                            </a>
-                            <a id="next_hot" className="next" href="#">
-                            &gt;
-                            </a>
-                        </div>
-                        <ul id="hot">
-                            <li>
-                            <div className="row">
-                                <div className="col-md-4 col-sm-4">
-                                <div className="products">
-                                    <div className="offer">
-                                    - %20
-                                    </div>
-                                    <div className="thumbnail">
-                                    <img src="../Assets/images/products/small/products-01.png" alt="Product Name" />
-                                    </div>
-                                    <div className="productname">
-                                    Iphone 5s Gold 32 Gb 2013
-                                    </div>
-                                    <h4 className="price">
-                                    $451.00
-                                    </h4>
-                                    <div className="button_group">
-                                    <button className="button add-cart" type="button">
-                                        Add To Cart
-                                    </button>
-                                    <button className="button compare" type="button">
-                                        <i className="fa fa-exchange">
-                                        </i>
-                                    </button>
-                                    <button className="button wishlist" type="button">
-                                        <i className="fa fa-heart-o">
-                                        </i>
-                                    </button>
-                                    </div>
-                                </div>
-                                </div>
-                                <div className="col-md-4 col-sm-4">
-                                <div className="products">
-                                    <div className="thumbnail">
-                                    <img src="../Assets/images/products/small/products-02.png" alt="Product Name" />
-                                    </div>
-                                    <div className="productname">
-                                    Iphone 5s Gold 32 Gb 2013
-                                    </div>
-                                    <h4 className="price">
-                                    $451.00
-                                    </h4>
-                                    <div className="button_group">
-                                    <button className="button add-cart" type="button">
-                                        Add To Cart
-                                    </button>
-                                    <button className="button compare" type="button">
-                                        <i className="fa fa-exchange">
-                                        </i>
-                                    </button>
-                                    <button className="button wishlist" type="button">
-                                        <i className="fa fa-heart-o">
-                                        </i>
-                                    </button>
-                                    </div>
-                                </div>
-                                </div>
-                                <div className="col-md-4 col-sm-4">
-                                <div className="products">
-                                    <div className="offer">
-                                    New
-                                    </div>
-                                    <div className="thumbnail">
-                                    <img src="../Assets/images/products/small/products-03.png" alt="Product Name" />
-                                    </div>
-                                    <div className="productname">
-                                    Iphone 5s Gold 32 Gb 2013
-                                    </div>
-                                    <h4 className="price">
-                                    $451.00
-                                    </h4>
-                                    <div className="button_group">
-                                    <button className="button add-cart" type="button">
-                                        Add To Cart
-                                    </button>
-                                    <button className="button compare" type="button">
-                                        <i className="fa fa-exchange">
-                                        </i>
-                                    </button>
-                                    <button className="button wishlist" type="button">
-                                        <i className="fa fa-heart-o">
-                                        </i>
-                                    </button>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                            </li>
-                            <li>
-                            <div className="row">
-                                <div className="col-md-4 col-sm-4">
-                                <div className="products">
-                                    <div className="offer">
-                                    - %20
-                                    </div>
-                                    <div className="thumbnail">
-                                    <img src="../Assets/images/products/small/products-01.png" alt="Product Name" />
-                                    </div>
-                                    <div className="productname">
-                                    Iphone 5s Gold 32 Gb 2013
-                                    </div>
-                                    <h4 className="price">
-                                    $451.00
-                                    </h4>
-                                    <div className="button_group">
-                                    <button className="button add-cart" type="button">
-                                        Add To Cart
-                                    </button>
-                                    <button className="button compare" type="button">
-                                        <i className="fa fa-exchange">
-                                        </i>
-                                    </button>
-                                    <button className="button wishlist" type="button">
-                                        <i className="fa fa-heart-o">
-                                        </i>
-                                    </button>
-                                    </div>
-                                </div>
-                                </div>
-                                <div className="col-md-4 col-sm-4">
-                                <div className="products">
-                                    <div className="thumbnail">
-                                    <img src="../Assets/images/products/small/products-02.png" alt="Product Name" />
-                                    </div>
-                                    <div className="productname">
-                                    Iphone 5s Gold 32 Gb 2013
-                                    </div>
-                                    <h4 className="price">
-                                    $451.00
-                                    </h4>
-                                    <div className="button_group">
-                                    <button className="button add-cart" type="button">
-                                        Add To Cart
-                                    </button>
-                                    <button className="button compare" type="button">
-                                        <i className="fa fa-exchange">
-                                        </i>
-                                    </button>
-                                    <button className="button wishlist" type="button">
-                                        <i className="fa fa-heart-o">
-                                        </i>
-                                    </button>
-                                    </div>
-                                </div>
-                                </div>
-                                <div className="col-md-4 col-sm-4">
-                                <div className="products">
-                                    <div className="offer">
-                                    New
-                                    </div>
-                                    <div className="thumbnail">
-                                    <img src="../Assets/images/products/small/products-03.png" alt="Product Name" />
-                                    </div>
-                                    <div className="productname">
-                                    Iphone 5s Gold 32 Gb 2013
-                                    </div>
-                                    <h4 className="price">
-                                    $451.00
-                                    </h4>
-                                    <div className="button_group">
-                                    <button className="button add-cart" type="button">
-                                        Add To Cart
-                                    </button>
-                                    <button className="button compare" type="button">
-                                        <i className="fa fa-exchange">
-                                        </i>
-                                    </button>
-                                    <button className="button wishlist" type="button">
-                                        <i className="fa fa-heart-o">
-                                        </i>
-                                    </button>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                            </li>
-                            <li>
-                            <div className="row">
-                                <div className="col-md-4 col-sm-4">
-                                <div className="products">
-                                    <div className="offer">
-                                    - %20
-                                    </div>
-                                    <div className="thumbnail">
-                                    <img src="../Assets/images/products/small/products-01.png" alt="Product Name" />
-                                    </div>
-                                    <div className="productname">
-                                    Iphone 5s Gold 32 Gb 2013
-                                    </div>
-                                    <h4 className="price">
-                                    $451.00
-                                    </h4>
-                                    <div className="button_group">
-                                    <button className="button add-cart" type="button">
-                                        Add To Cart
-                                    </button>
-                                    <button className="button compare" type="button">
-                                        <i className="fa fa-exchange">
-                                        </i>
-                                    </button>
-                                    <button className="button wishlist" type="button">
-                                        <i className="fa fa-heart-o">
-                                        </i>
-                                    </button>
-                                    </div>
-                                </div>
-                                </div>
-                                <div className="col-md-4 col-sm-4">
-                                <div className="products">
-                                    <div className="thumbnail">
-                                    <img src="../Assets/images/products/small/products-02.png" alt="Product Name" />
-                                    </div>
-                                    <div className="productname">
-                                    Iphone 5s Gold 32 Gb 2013
-                                    </div>
-                                    <h4 className="price">
-                                    $451.00
-                                    </h4>
-                                    <div className="button_group">
-                                    <button className="button add-cart" type="button">
-                                        Add To Cart
-                                    </button>
-                                    <button className="button compare" type="button">
-                                        <i className="fa fa-exchange">
-                                        </i>
-                                    </button>
-                                    <button className="button wishlist" type="button">
-                                        <i className="fa fa-heart-o">
-                                        </i>
-                                    </button>
-                                    </div>
-                                </div>
-                                </div>
-                                <div className="col-md-4 col-sm-4">
-                                <div className="products">
-                                    <div className="offer">
-                                    New
-                                    </div>
-                                    <div className="thumbnail">
-                                    <img src="../Assets/images/products/small/products-03.png" alt="Product Name" />
-                                    </div>
-                                    <div className="productname">
-                                    Iphone 5s Gold 32 Gb 2013
-                                    </div>
-                                    <h4 className="price">
-                                    $451.00
-                                    </h4>
-                                    <div className="button_group">
-                                    <button className="button add-cart" type="button">
-                                        Add To Cart
-                                    </button>
-                                    <button className="button compare" type="button">
-                                        <i className="fa fa-exchange">
-                                        </i>
-                                    </button>
-                                    <button className="button wishlist" type="button">
-                                        <i className="fa fa-heart-o">
-                                        </i>
-                                    </button>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                            </li>
-                        </ul>
-                        </div>
-                        <div className="clearfix">
-                        </div>
-                    </div>
-                    <div className="col-md-3">
-                        <div className="special-deal leftbar">
-                        <h4 className="title">
-                            Special 
-                            <strong>
-                            Deals
-                            </strong>
-                        </h4>
-                        <div className="special-item">
-                            <div className="product-image">
-                            <a href="#">
-                                <img src="../Assets/images/products/thum/products-01.png" alt="" />
-                            </a>
-                            </div>
-                            <div className="product-info">
-                            <p>
-                                Licoln Corner Unit
-                            </p>
-                            <h5 className="price">
-                                $300.00
-                            </h5>
-                            </div>
-                        </div>
-                        <div className="special-item">
-                            <div className="product-image">
-                            <a href="#">
-                                <img src="../Assets/images/products/thum/products-02.png" alt="" />
-                            </a>
-                            </div>
-                            <div className="product-info">
-                            <p>
-                                Licoln Corner Unit
-                            </p>
-                            <h5 className="price">
-                                $300.00
-                            </h5>
-                            </div>
-                        </div>
-                        <div className="special-item">
-                            <div className="product-image">
-                            <a href="#">
-                                <img src="../Assets/images/products/thum/products-03.png" alt="" />
-                            </a>
-                            </div>
-                            <div className="product-info">
-                            <p>
-                                Licoln Corner Unit
-                            </p>
-                            <h5 className="price">
-                                $300.00
-                            </h5>
-                            </div>
-                        </div>
-                        </div>
-                        <div className="clearfix">
-                        </div>
-                        <div className="product-tag leftbar">
-                        <h3 className="title">
-                            Products 
-                            <strong>
-                            Tags
-                            </strong>
-                        </h3>
-                        <ul>
-                            <li>
-                            <a href="#">
-                                Lincoln us
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                SDress for Girl
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                Corner
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                Window
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                PG
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                Oscar
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                Bath room
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                PSD
-                            </a>
-                            </li>
-                        </ul>
-                        </div>
-                        <div className="clearfix">
-                        </div>
-                        <div className="get-newsletter leftbar">
-                        <h3 className="title">
-                            Get 
-                            <strong>
-                            newsletter
-                            </strong>
-                        </h3>
-                        <p>
-                            Casio G Shock Digital Dial Black.
-                        </p>
-                        <form>
-                            <input className="email" type="text" name placeholder="Your Email..." />
-                            <input className="submit" type="submit" defaultValue="Submit" />
-                        </form>
-                        </div>
-                        <div className="clearfix">
-                        </div>
-                        <div className="fbl-box leftbar">
-                        <h3 className="title">
-                            Facebook
-                        </h3>
-                        <span className="likebutton">
-                            <a href="#">
-                            <img src="../Assets/images/fblike.png" alt="" />
-                            </a>
-                        </span>
-                        <p>
-                            12k people like Flat Shop.
-                        </p>
-                        <ul>
-                            <li>
-                            <a href="#">
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                            </a>
-                            </li>
-                        </ul>
-                        <div className="fbplug">
-                            <a href="#">
-                            <span>
-                                <img src="../Assets/images/fbicon.png" alt="" />
-                            </span>
-                            Facebook social plugin
-                            </a>
-                        </div>
-                        </div>
-                        <div className="clearfix">
-                        </div>
-                    </div>
-                    </div>
-                    <div className="clearfix">
-                    </div>
-                    <div className="our-brand">
-                    <h3 className="title">
-                        <strong>
-                        Our 
-                        </strong>
-                        Brands
-                    </h3>
-                    <div className="control">
-                        <a id="prev_brand" className="prev" href="#">
-                        &lt;
-                        </a>
-                        <a id="next_brand" className="next" href="#">
-                        &gt;
-                        </a>
-                    </div>
-                    <ul id="braldLogo">
-                        <li>
-                        <ul className="brand_item">
-                            <li>
-                            <a href="#">
-                                <div className="brand-logo">
-                                <img src="../Assets/images/envato.png" alt="" />
-                                </div>
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                <div className="brand-logo">
-                                <img src="../Assets/images/themeforest.png" alt="" />
-                                </div>
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                <div className="brand-logo">
-                                <img src="../Assets/images/photodune.png" alt="" />
-                                </div>
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                <div className="brand-logo">
-                                <img src="../Assets/images/activeden.png" alt="" />
-                                </div>
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                <div className="brand-logo">
-                                <img src="../Assets/images/envato.png" alt="" />
-                                </div>
-                            </a>
-                            </li>
-                        </ul>
-                        </li>
-                        <li>
-                        <ul className="brand_item">
-                            <li>
-                            <a href="#">
-                                <div className="brand-logo">
-                                <img src="../Assets/images/envato.png" alt="" />
-                                </div>
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                <div className="brand-logo">
-                                <img src="../Assets/images/themeforest.png" alt="" />
-                                </div>
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                <div className="brand-logo">
-                                <img src="../Assets/images/photodune.png" alt="" />
-                                </div>
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                <div className="brand-logo">
-                                <img src="../Assets/images/activeden.png" alt="" />
-                                </div>
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                <div className="brand-logo">
-                                <img src="../Assets/images/envato.png" alt="" />
-                                </div>
-                            </a>
-                            </li>
-                        </ul>
-                        </li>
-                    </ul>
-                    </div>
-                </div>
-                </div>
-                <div className="clearfix">
-                </div>
-                <div className="footer">
-                <div className="footer-info">
                     <div className="container">
-                    <div className="row">
-                        <div className="col-md-3">
-                        <div className="footer-logo">
-                            <a href="#">
-                            <img src="../Assets/images/logo.png" alt="" />
-                            </a>
+                        <div className="row">
+                            <div className="col-12">
+                                <div className="products-details">
+                                    <div className="preview_image">
+                                        <div className="preview-small">
+                                            <img id="zoom_03" src={this.state.product.imgUrl} alt="detail-product-image" />
+                                        </div>
+                                    </div>
+                                    <div className="products-description">
+                                        <h5 className="name font-20 font-weight-bold">
+                                            {this.state.product.name}
+                                        </h5>
+                                        <p className='text-primary font-15'>
+                                            {this.state.product.categoryName}
+                                        </p>
+                                        <p>
+                                            Availability:&nbsp;
+                                            {this.state.product.status === 1
+                                                ?
+                                                <span className="text-success">
+                                                    In Stock
+                                                </span>
+                                                :
+                                                <span className="text-danger">
+                                                    Out of Stock
+                                                </span>
+                                            }
+                                        </p>
+                                        <p style={{ height: 200, overflowY: "auto" }}>
+                                            {this.state.product.description}
+                                        </p>
+                                        <hr className="border" />
+                                        <div className="price">
+                                            Price :
+                                            <span className="new_price">$&nbsp;{this.state.product.price}</span>
+
+                                        </div>
+                                        <hr className="border" />
+                                        <div className="wided">
+                                            <div className="qty">
+                                                Quantity &nbsp;&nbsp;: &nbsp;&nbsp;
+                                                <input type='number' min='1' max='10' value={this.state.quantity} onChange={e => { this.handleQuantityChange(e) }} />
+                                            </div>
+                                            <div className="button_group">
+                                                <button className="button mr-5" style={{ width: 200 }} onClick={e=>{e.preventDefault();this.addToCart(this.state.product, this.state.quantity);}}>
+                                                    Add To Cart
+                                                </button>
+
+                                            </div>
+                                        </div>
+                                        <div className="clearfix">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div id="productsDetails" className="hot-products">
+                                    <h3 className="title">
+                                        Products in same <strong>category</strong>
+                                    </h3>
+                                    <ul id="hot">
+                                        <li>
+                                            <div className="row">
+                                                {this.generateProductSameCate()}
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                            </div>
+
                         </div>
-                        </div>
-                        <div className="col-md-3 col-sm-6">
-                        <h4 className="title">
-                            Contact 
-                            <strong>
-                            Info
-                            </strong>
-                        </h4>
-                        <p>
-                            No. 08, Nguyen Trai, Hanoi , Vietnam
-                        </p>
-                        <p>
-                            Call Us : (084) 1900 1008
-                        </p>
-                        <p>
-                            Email : michael@leebros.us
-                        </p>
-                        </div>
-                        <div className="col-md-3 col-sm-6">
-                        <h4 className="title">
-                            Customer
-                            <strong>
-                            Support
-                            </strong>
-                        </h4>
-                        <ul className="support">
-                            <li>
-                            <a href="#">
-                                FAQ
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                Payment Option
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                Booking Tips
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                Infomation
-                            </a>
-                            </li>
-                        </ul>
-                        </div>
-                        <div className="col-md-3">
-                        <h4 className="title">
-                            Get Our 
-                            <strong>
-                            Newsletter 
-                            </strong>
-                        </h4>
-                        <p>
-                            Lorem ipsum dolor ipsum dolor.
-                        </p>
-                        <form className="newsletter">
-                            <input type="text" name placeholder="Type your email...." />
-                            <input type="submit" defaultValue="SignUp" className="button" />
-                        </form>
-                        </div>
+
                     </div>
-                    </div>
-                </div>
-                <div className="copyright-info">
-                    <div className="container">
-                    <div className="row">
-                        <div className="col-md-6">
-                        <p>
-                            Copyright © 2012. Designed by 
-                            <a href="#">
-                            Michael Lee
-                            </a>
-                            . All rights reseved
-                        </p>
-                        </div>
-                        <div className="col-md-6">
-                        <ul className="social-icon">
-                            <li>
-                            <a href="#" className="linkedin">
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#" className="google-plus">
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#" className="twitter">
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#" className="facebook">
-                            </a>
-                            </li>
-                        </ul>
-                        </div>
-                    </div>
-                    </div>
-                </div>
                 </div>
             </div>
         )

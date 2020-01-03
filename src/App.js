@@ -1,12 +1,11 @@
-import React from 'react';
+import React, { Component } from 'react';
 import './App.css';
 
-import { Router, Switch,Route, Redirect } from 'react-router-dom';
+import { Router, Switch, Route, Redirect, BrowserRouter } from 'react-router-dom';
 import { history } from './History/history';
-import { IsLogInRoute } from './Route/CustomeRoute';
+import { NotLogInRoute, LogInRoute, MyRoute } from './Route/CustomeRoute';
 
 import LandingPageContainer from './LandingPage/LandingPage.container';
-import ProductGrid from './ProductGrid/ProductGrid';
 import ProductList from './ProductList/ProductList';
 import Detail from './Detail/Detail';
 
@@ -19,31 +18,47 @@ import Register from './Register/Register';
 
 import Profile from './Profile/Profile';
 import Footer from './Helper/Footer';
+import Contact from './Contact/Contact';
 
-function App() {
-  return (
-    <div>
-      <Router history={history}>
-        <Header></Header>
-        <div style={{marginTop: 170}}>
-          <Switch>
-            <Route path="/home" exact component={LandingPageContainer}></Route>
-            <Route path="/login" exact component={Login}></Route>
-            <Route path="/register" exact component={Register}></Route> 
-            <IsLogInRoute path="/profile" exact component={Profile}></IsLogInRoute> 
-            <Route path="/productgird" exact component={ProductGrid}></Route>
-            <Route path="/productgird" exact component={ProductGrid}></Route>
-            <Route path="/productlist" exact component={ProductList}></Route>
-            <Route path="/detail" exact component={Detail}></Route>
-            <Route path="/cart" exact component={Cart}></Route>
-            <IsLogInRoute path="/checkout" exact component={Checkout}></IsLogInRoute>
-            <Redirect to='/home' />
-          </Switch>
-        </div>
-        <Footer></Footer>
-      </Router>
-    </div>
-  );
+class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      test: 0
+    }
+  }
+
+  updateCartLength() {
+    this.setState({test:this.state.test + 1});
+  }
+  render() {
+    return (
+      <div>
+        
+        <Router history={history}>
+          <Header test={this.state.test}></Header>
+          <div style={{ marginTop: 100 }}>
+            <Switch>
+              <MyRoute path="/home" exact updateCartLength={()=>{this.updateCartLength()}} component={LandingPageContainer}></MyRoute>
+              <LogInRoute path="/login" exact component={Login}></LogInRoute>
+              <LogInRoute path="/register" exact component={Register}></LogInRoute>
+              <NotLogInRoute path="/profile" exact component={Profile}></NotLogInRoute>
+              <MyRoute path="/productlist" updateCartLength={()=>{this.updateCartLength()}} exact component={ProductList}></MyRoute>
+              <MyRoute path="/productlist/id=:id" exact updateCartLength={()=>{this.updateCartLength()}} component={ProductList}></MyRoute>
+              <MyRoute path="/productlist/query=:query" exact updateCartLength={()=>{this.updateCartLength()}} component={ProductList}></MyRoute>
+              <Route path="/detail" exact component={Detail}></Route>
+              <MyRoute path="/detail/id=:id" updateCartLength={()=>{this.updateCartLength()}} exact component={Detail}></MyRoute>
+              <MyRoute path="/cart" updateCartLength={()=>{this.updateCartLength()}} exact component={Cart}></MyRoute>
+              <Route path="/contact" exact component={Contact}></Route>
+              <NotLogInRoute path="/checkout" exact component={Checkout}></NotLogInRoute>
+              <Redirect to='/home' />
+            </Switch>
+          </div>
+          <Footer></Footer>
+        </Router> 
+      </div>
+    );
+  }
 }
 
 export default App;

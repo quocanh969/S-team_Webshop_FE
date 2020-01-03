@@ -1,909 +1,394 @@
 /* eslint-disable */
 import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
-import Header from '../Helper/Header';
+import { CategorySer } from '../Services/CategoryService';
+import { ProductSer } from '../Services/ProductService';
+import { history } from '../History/history';
 
 export default class ProductList extends Component {
+    cart = [];
+    constructor(props) {
+        super(props);
+        this.state = {
+            cateList: [],
+            productList: [],
+            listMode: true,
+        }
+
+        
+        if(JSON.parse(localStorage.getItem('cart')) === null)
+        {
+            this.cart = [];
+            localStorage.setItem('cart',JSON.stringify(this.cart));
+            
+        }
+        else
+        {
+            this.cart = JSON.parse(localStorage.getItem('cart'));
+        }
+
+        let IdCate = this.props.match.params.id;
+        let QueryStr = this.props.match.params.query;
+        this.initCategoryList();
+        this.initProductList(IdCate, QueryStr);
+    }
+
+    initCategoryList() {
+        CategorySer.getAllCategories()
+            .then(res => {
+                if (res.code === 1) {
+                    this.setState({
+                        cateList: res.info.data,
+                    })
+                }
+                else {
+                    console.log(res.info.message);
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
+
+    initProductList(IdCate, QueryStr) {
+        if(IdCate !== undefined)
+        {
+            ProductSer.getProductByCategory(IdCate)
+            .then(res => {
+                if (res.code === 1) {
+                    this.setState({
+                        productList: res.info.data,
+                    })
+                }
+                else {
+                    console.log(res.info.message);
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        }
+        else if(QueryStr !== undefined)
+        {
+            ProductSer.getProductByQuery(QueryStr)
+            .then(res => {
+                console.log('query: ');
+                console.log(res);
+                if (res.code === 1) {
+                    this.setState({
+                        productList: res.info.data,
+                    })
+                }
+                else {
+                    console.log(res.info.message);
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        }
+        else
+        {
+            ProductSer.getTopProduct()
+            .then(res => {
+                if (res.code === 1) {
+                    console.log(this.res);
+                    this.setState({
+                        productList: res.info.data,
+                    })
+                }
+                else {
+                    console.log(res.info.message);
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            })            
+        }        
+    }
+
+    generateCategoryList() {
+        let content = [];
+
+        for (let e of this.state.cateList) {
+            content.push(
+                <li key={e.id}>
+                    <a href={`./id=${e.id}`}>
+                        {e.name}
+                    </a>
+                </li>
+            );
+        }
+
+        return content;
+    }
+
+    generateProdcutList() {
+        let content = [];
+
+        for (let e of this.state.productList) {
+            content.push(
+                <li className="products" key={e.id}>
+                    <div className="thumbnail">
+                        <img src={e.imgUrl} alt="Product Name" />
+                    </div>
+                    <div className="product-list-description">
+                        <div className="productname">
+                            {e.name}
+                        </div>
+
+                        <p style={{ minHeight: 150 }}>
+                            {e.description}
+                        </p>
+                        <div className="row align-items-center">
+                            <div className="col-4">
+                                <span className="text-danger font-20 font-weight-bold">
+                                    $&nbsp;{e.price}
+                                </span>
+                            </div>
+                            <div className="col-8">
+                                <div className="btn btn-danger cursor-pointer mx-2" onClick={()=>{this.addToCart(e)}}>
+                                    Add To Cart
+                                </div>
+                                <button className="btn btn-outline-danger mx-2">
+                                    Detail
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            );
+        }
+
+        return content;
+    }
+
+    generateProdcutGrid() {
+        let content = [];
+
+        for (let e of this.state.productList) {
+            content.push(
+                <div className="col-md-4 col-sm-6" key={e.id}>
+                    <div className="products">
+                        <div className="thumbnail">
+                            <NavLink to={`/detail/id=${e.id}`}>
+                                <img src={e.imgUrl} style={{width:180}} alt="Product Name" />
+                            </NavLink>
+                        </div>
+                        <div className="productname">
+                            {e.name}
+                        </div>
+                        <h4 className="price">
+                            $&nbsp;{e.price}
+                        </h4>
+                        <div className="button_group">
+                            <button className="button add-cart" type="button">
+                                Add To Cart
+                            </button>
+                            <NavLink to={`/detail/id=${e.id}`} className="button compare">
+                                Detail
+                            </NavLink>
+                        </div>
+                    </div>
+                </div>
+
+            );
+        }
+
+        return content;
+    }
+
+    addToCart(product) {
+        this.cart.push({
+            id_product: product.id,
+            imgUrl: product.imgUrl,
+            name: product.name,
+            price: product.price, 
+            quantity: 1,
+            description: product.description,
+        });
+        localStorage.setItem('cart',JSON.stringify(this.cart));
+        let {updateCartLength} = this.props;
+        updateCartLength();
+        alert('Successful add product to cart');
+    }
+
     render() {
+        var listBtnClass = '';
+        var gridBtnClass = '';
+
+        if (this.state.listMode) {
+            listBtnClass = 'list active cursor-pointer';
+            gridBtnClass = 'grid cursor-pointer';
+        }
+        else {
+            listBtnClass = 'list cursor-pointer';
+            gridBtnClass = 'grid active cursor-pointer';
+        }
+
+
         return (
             <div className="wrapper">
-                <div className="clearfix">
-                </div>
+
                 <div className="container_fullwidth">
-                <div className="container">
-                    <div className="row">
-                    <div className="col-md-3">
-                        <div className="category leftbar">
-                        <h3 className="title">
-                            Categories
-                        </h3>
-                        <ul>
-                            <li>
-                            <a href="#">
-                                Men
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                Women
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                Salon
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                New Trend
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                Living room
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                Bed room
-                            </a>
-                            </li>
-                        </ul>
-                        </div>
-                        <div className="branch leftbar">
-                        <h3 className="title">
-                            Branch
-                        </h3>
-                        <ul>
-                            <li>
-                            <a href="#">
-                                New
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                Sofa
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                Salon
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                New Trend
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                Living room
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                Bed room
-                            </a>
-                            </li>
-                        </ul>
-                        </div>
-                        <div className="price-filter leftbar">
-                        <h3 className="title">
-                            Price
-                        </h3>
-                        <form className="pricing">
-                            <label>
-                            $ 
-                            <input type="number" />
-                            </label>
-                            <span className="separate">
-                            - 
-                            </span>
-                            <label>
-                            $ 
-                            <input type="number" />
-                            </label>
-                            <input type="submit" defaultValue="Go" />
-                        </form>
-                        </div>
-                        <div className="clolr-filter leftbar">
-                        <h3 className="title">
-                            Color
-                        </h3>
-                        <ul>
-                            <li>
-                            <a href="#" className="red-bg">
-                                light red
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#" className=" yellow-bg">
-                                yellow"
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#" className="black-bg ">
-                                black
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#" className="pink-bg">
-                                pink
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#" className="dkpink-bg">
-                                dkpink
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#" className="chocolate-bg">
-                                chocolate
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#" className="orange-bg">
-                                orange-bg
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#" className="off-white-bg">
-                                off-white
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#" className="extra-lightgreen-bg">
-                                extra-lightgreen
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#" className="lightgreen-bg">
-                                lightgreen
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#" className="biscuit-bg">
-                                biscuit
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#" className="chocolatelight-bg">
-                                chocolatelight
-                            </a>
-                            </li>
-                        </ul>
-                        </div>
-                        <div className="product-tag leftbar">
-                        <h3 className="title">
-                            Products 
-                            <strong>
-                            Tags
-                            </strong>
-                        </h3>
-                        <ul>
-                            <li>
-                            <a href="#">
-                                Lincoln us
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                SDress for Girl
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                Corner
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                Window
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                PG
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                Oscar
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                Bath room
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                PSD
-                            </a>
-                            </li>
-                        </ul>
-                        </div>
-                        <div className="others leftbar">
-                        <h3 className="title">
-                            Others
-                        </h3>
-                        </div>
-                        <div className="others leftbar">
-                        <h3 className="title">
-                            Others
-                        </h3>
-                        </div>
-                        <div className="fbl-box leftbar">
-                        <h3 className="title">
-                            Facebook
-                        </h3>
-                        <span className="likebutton">
-                            <a href="#">
-                            <img src="../Assets/images/fblike.png" alt="" />
-                            </a>
-                        </span>
-                        <p>
-                            12k people like Flat Shop.
-                        </p>
-                        <ul>
-                            <li>
-                            <a href="#">
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                            </a>
-                            </li>
-                        </ul>
-                        <div className="fbplug">
-                            <a href="#">
-                            <span>
-                                <img src="../Assets/images/fbicon.png" alt="" />
-                            </span>
-                            Facebook social plugin
-                            </a>
-                        </div>
-                        </div>
-                        <div className="leftbanner">
-                        <img src="../Assets/images/banner-small-01.png" alt="" />
-                        </div>
-                    </div>
-                    <div className="col-md-9">
-                        <div className="banner">
-                        <div className="bannerslide" id="bannerslide">
-                            <ul className="slides">
-                            <li>
-                                <a href="#">
-                                <img src="../Assets/images/banner-01.jpg" alt="" />
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                <img src="../Assets/images/banner-02.jpg" alt="" />
-                                </a>
-                            </li>
-                            </ul>
-                        </div>
-                        </div>
-                        <div className="clearfix">
-                        </div>
-                        <div className="products-list">
-                        <div className="toolbar">
-                            <div className="sorter">
-                            <div className="view-mode">
-                                <a href="#" className="list active">
-                                List
-                                </a>
-                                <NavLink to="/productgird" className="grid">
-                                Grid
-                                </NavLink>
-                            </div>
-                            <div className="sort-by">
-                                Sort by : 
-                                <select name>
-                                <option value="Default" selected>
-                                    Default
-                                </option>
-                                <option value="Name">
-                                    Name
-                                </option>
-                                <option value="Price">
-                                    Price
-                                </option>
-                                </select>
-                            </div>
-                            <div className="limiter">
-                                Show : 
-                                <select name>
-                                <option value={3} selected>
-                                    3
-                                </option>
-                                <option value={6}>
-                                    6
-                                </option>
-                                <option value={9}>
-                                    9
-                                </option>
-                                </select>
-                            </div>
-                            </div>
-                            <div className="pager">
-                            <a href="#" className="prev-page">
-                                <i className="fa fa-angle-left">
-                                </i>
-                            </a>
-                            <a href="#" className="active">
-                                1
-                            </a>
-                            <a href="#">
-                                2
-                            </a>
-                            <a href="#">
-                                3
-                            </a>
-                            <a href="#" className="next-page">
-                                <i className="fa fa-angle-right">
-                                </i>
-                            </a>
-                            </div>
-                        </div>
-                        <ul className="products-listItem">
-                            <li className="products">
-                            <div className="offer">
-                                New
-                            </div>
-                            <div className="thumbnail">
-                                <img src="../Assets/images/products/small/products-05.png" alt="Product Name" />
-                            </div>
-                            <div className="product-list-description">
-                                <div className="productname">
-                                Lincoln Corner Unit Products
-                                </div>
-                                <p>
-                                <img src="../Assets/images/star.png" alt="" />
-                                <a href="#" className="review_num">
-                                    02 Review(s)
-                                </a>
-                                </p>
-                                <p>
-                                Proin lectus ipsum, gravida et mattis vulputate, tristique ut lectus. Sed et lorem nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultri ces posuere cubilia curae. Proin lectus ipsum, gravida etds mattis vulputate, tristique ut lectus. Sed et lorem nunc...
-                                </p>
-                                <div className="list_bottom">
-                                <div className="price">
-                                    <span className="new_price">
-                                    450.00
-                                    <sup>
-                                        $
-                                    </sup>
-                                    </span>
-                                    <span className="old_price">
-                                    450.00
-                                    <sup>
-                                        $
-                                    </sup>
-                                    </span>
-                                </div>
-                                <div className="button_group">
-                                    <button className="button">
-                                    Add To Cart
-                                    </button>
-                                    <button className="button compare">
-                                    <i className="fa fa-exchange">
-                                    </i>
-                                    </button>
-                                    <button className="button favorite">
-                                    <i className="fa fa-heart-o">
-                                    </i>
-                                    </button>
-                                </div>
-                                </div>
-                            </div>
-                            </li>
-                            <li className="products">
-                            <div className="offer">
-                                New
-                            </div>
-                            <div className="thumbnail">
-                                <img src="../Assets/images/products/small/products-05.png" alt="Product Name" />
-                            </div>
-                            <div className="product-list-description">
-                                <div className="productname">
-                                Lincoln Corner Unit Products
-                                </div>
-                                <p>
-                                <img src="../Assets/images/star.png" alt="" />
-                                <a href="#" className="review_num">
-                                    02 Review(s)
-                                </a>
-                                </p>
-                                <p>
-                                Proin lectus ipsum, gravida et mattis vulputate, tristique ut lectus. Sed et lorem nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultri ces posuere cubilia curae. Proin lectus ipsum, gravida etds mattis vulputate, tristique ut lectus. Sed et lorem nunc...
-                                </p>
-                                <div className="list_bottom">
-                                <div className="price">
-                                    <span className="new_price">
-                                    450.00
-                                    <sup>
-                                        $
-                                    </sup>
-                                    </span>
-                                    <span className="old_price">
-                                    450.00
-                                    <sup>
-                                        $
-                                    </sup>
-                                    </span>
-                                </div>
-                                <div className="button_group">
-                                    <button className="button">
-                                    Add To Cart
-                                    </button>
-                                    <button className="button compare">
-                                    <i className="fa fa-exchange">
-                                    </i>
-                                    </button>
-                                    <button className="button favorite">
-                                    <i className="fa fa-heart-o">
-                                    </i>
-                                    </button>
-                                </div>
-                                </div>
-                            </div>
-                            </li>
-                            <li className="products">
-                            <div className="offer">
-                                New
-                            </div>
-                            <div className="thumbnail">
-                                <img src="../Assets/images/products/small/products-05.png" alt="Product Name" />
-                            </div>
-                            <div className="product-list-description">
-                                <div className="productname">
-                                Lincoln Corner Unit Products
-                                </div>
-                                <p>
-                                <img src="../Assets/images/star.png" alt="" />
-                                <a href="#" className="review_num">
-                                    02 Review(s)
-                                </a>
-                                </p>
-                                <p>
-                                Proin lectus ipsum, gravida et mattis vulputate, tristique ut lectus. Sed et lorem nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultri ces posuere cubilia curae. Proin lectus ipsum, gravida etds mattis vulputate, tristique ut lectus. Sed et lorem nunc...
-                                </p>
-                                <div className="list_bottom">
-                                <div className="price">
-                                    <span className="new_price">
-                                    450.00
-                                    <sup>
-                                        $
-                                    </sup>
-                                    </span>
-                                    <span className="old_price">
-                                    450.00
-                                    <sup>
-                                        $
-                                    </sup>
-                                    </span>
-                                </div>
-                                <div className="button_group">
-                                    <button className="button">
-                                    Add To Cart
-                                    </button>
-                                    <button className="button compare">
-                                    <i className="fa fa-exchange">
-                                    </i>
-                                    </button>
-                                    <button className="button favorite">
-                                    <i className="fa fa-heart-o">
-                                    </i>
-                                    </button>
-                                </div>
-                                </div>
-                            </div>
-                            </li>
-                            <li className="products">
-                            <div className="offer">
-                                New
-                            </div>
-                            <div className="thumbnail">
-                                <img src="../Assets/images/products/small/products-05.png" alt="Product Name" />
-                            </div>
-                            <div className="product-list-description">
-                                <div className="productname">
-                                Lincoln Corner Unit Products
-                                </div>
-                                <p>
-                                <img src="../Assets/images/star.png" alt="" />
-                                <a href="#" className="review_num">
-                                    02 Review(s)
-                                </a>
-                                </p>
-                                <p>
-                                Proin lectus ipsum, gravida et mattis vulputate, tristique ut lectus. Sed et lorem nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultri ces posuere cubilia curae. Proin lectus ipsum, gravida etds mattis vulputate, tristique ut lectus. Sed et lorem nunc...
-                                </p>
-                                <div className="list_bottom">
-                                <div className="price">
-                                    <span className="new_price">
-                                    450.00
-                                    <sup>
-                                        $
-                                    </sup>
-                                    </span>
-                                    <span className="old_price">
-                                    450.00
-                                    <sup>
-                                        $
-                                    </sup>
-                                    </span>
-                                </div>
-                                <div className="button_group">
-                                    <button className="button">
-                                    Add To Cart
-                                    </button>
-                                    <button className="button compare">
-                                    <i className="fa fa-exchange">
-                                    </i>
-                                    </button>
-                                    <button className="button favorite">
-                                    <i className="fa fa-heart-o">
-                                    </i>
-                                    </button>
-                                </div>
-                                </div>
-                            </div>
-                            </li>
-                            <li className="products">
-                            <div className="offer">
-                                New
-                            </div>
-                            <div className="thumbnail">
-                                <img src="../Assets/images/products/small/products-05.png" alt="Product Name" />
-                            </div>
-                            <div className="product-list-description">
-                                <div className="productname">
-                                Lincoln Corner Unit Products
-                                </div>
-                                <p>
-                                <img src="../Assets/images/star.png" alt="" />
-                                <a href="#" className="review_num">
-                                    02 Review(s)
-                                </a>
-                                </p>
-                                <p>
-                                Proin lectus ipsum, gravida et mattis vulputate, tristique ut lectus. Sed et lorem nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultri ces posuere cubilia curae. Proin lectus ipsum, gravida etds mattis vulputate, tristique ut lectus. Sed et lorem nunc...
-                                </p>
-                                <div className="list_bottom">
-                                <div className="price">
-                                    <span className="new_price">
-                                    450.00
-                                    <sup>
-                                        $
-                                    </sup>
-                                    </span>
-                                    <span className="old_price">
-                                    450.00
-                                    <sup>
-                                        $
-                                    </sup>
-                                    </span>
-                                </div>
-                                <div className="button_group">
-                                    <button className="button">
-                                    Add To Cart
-                                    </button>
-                                    <button className="button compare">
-                                    <i className="fa fa-exchange">
-                                    </i>
-                                    </button>
-                                    <button className="button favorite">
-                                    <i className="fa fa-heart-o">
-                                    </i>
-                                    </button>
-                                </div>
-                                </div>
-                            </div>
-                            </li>
-                        </ul>
-                        <div className="toolbar">
-                            <div className="sorter bottom">
-                            <div className="view-mode">
-                                <a href="#" className="list active">
-                                List
-                                </a>
-                                <NavLink to="/productgird" className="grid">
-                                Grid
-                                </NavLink>
-                            </div>
-                            <div className="sort-by">
-                                Sort by : 
-                                <select name>
-                                <option value="Default" selected>
-                                    Default
-                                </option>
-                                <option value="Name">
-                                    Name
-                                </option>
-                                <option value="Price">
-                                    Price
-                                </option>
-                                </select>
-                            </div>
-                            <div className="limiter">
-                                Show : 
-                                <select name>
-                                <option value={3} selected>
-                                    3
-                                </option>
-                                <option value={6}>
-                                    6
-                                </option>
-                                <option value={9}>
-                                    9
-                                </option>
-                                </select>
-                            </div>
-                            </div>
-                            <div className="pager">
-                            <a href="#" className="prev-page">
-                                <i className="fa fa-angle-left">
-                                </i>
-                            </a>
-                            <a href="#" className="active">
-                                1
-                            </a>
-                            <a href="#">
-                                2
-                            </a>
-                            <a href="#">
-                                3
-                            </a>
-                            <a href="#" className="next-page">
-                                <i className="fa fa-angle-right">
-                                </i>
-                            </a>
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
-                    <div className="clearfix">
-                    </div>
-                    <div className="our-brand">
-                    <h3 className="title">
-                        <strong>
-                        Our 
-                        </strong>
-                        Brands
-                    </h3>
-                    <div className="control">
-                        <a id="prev_brand" className="prev" href="#">
-                        &lt;
-                        </a>
-                        <a id="next_brand" className="next" href="#">
-                        &gt;
-                        </a>
-                    </div>
-                    <ul id="braldLogo">
-                        <li>
-                        <ul className="brand_item">
-                            <li>
-                            <a href="#">
-                                <div className="brand-logo">
-                                <img src="../Assets/images/envato.png" alt="" />
-                                </div>
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                <div className="brand-logo">
-                                <img src="../Assets/images/themeforest.png" alt="" />
-                                </div>
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                <div className="brand-logo">
-                                <img src="../Assets/images/photodune.png" alt="" />
-                                </div>
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                <div className="brand-logo">
-                                <img src="../Assets/images/activeden.png" alt="" />
-                                </div>
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                <div className="brand-logo">
-                                <img src="../Assets/images/envato.png" alt="" />
-                                </div>
-                            </a>
-                            </li>
-                        </ul>
-                        </li>
-                        <li>
-                        <ul className="brand_item">
-                            <li>
-                            <a href="#">
-                                <div className="brand-logo">
-                                <img src="../Assets/images/envato.png" alt="" />
-                                </div>
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                <div className="brand-logo">
-                                <img src="../Assets/images/themeforest.png" alt="" />
-                                </div>
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                <div className="brand-logo">
-                                <img src="../Assets/images/photodune.png" alt="" />
-                                </div>
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                <div className="brand-logo">
-                                <img src="../Assets/images/activeden.png" alt="" />
-                                </div>
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                <div className="brand-logo">
-                                <img src="../Assets/images/envato.png" alt="" />
-                                </div>
-                            </a>
-                            </li>
-                        </ul>
-                        </li>
-                    </ul>
-                    </div>
-                </div>
-                </div>
-                <div className="clearfix">
-                </div>
-                <div className="footer">
-                <div className="footer-info">
                     <div className="container">
-                    <div className="row">
-                        <div className="col-md-3">
-                        <div className="footer-logo">
-                            <a href="#">
-                            <img src="../Assets/images/logo.png" alt="" />
+                        <div className="row">
+
+                            <div className="col-md-3">
+                                <div className="category leftbar">
+                                    <h3 className="title">
+                                        Categories
+                                    </h3>
+                                    <ul>
+                                        {this.generateCategoryList()}
+                                    </ul>
+                                </div>
+
+                                <div className="leftbanner">
+                                    <img src="http://aothunit.com/asset/images/products/x2/1557152152.0182_59383659_623449291456412_5131622222271610880_n.jpg" alt="" />
+                                </div>
+                            </div>
+
+                            <div className="col-md-9">
+
+                                <div className="products-list">
+                                    <div className="toolbar">
+                                        <div className="sorter">
+                                            <div className="view-mode">
+                                                <a href='' className={listBtnClass} onClick={e => { e.preventDefault();this.setState({ listMode: true });}}>
+                                                    List
+                                                </a>
+                                                <a href='' className={gridBtnClass} onClick={e => { e.preventDefault();this.setState({ listMode: false });}}>
+                                                    Grid
+                                                </a>
+                                            </div>
+                                            <div className="sort-by">
+                                                Sort by :
+                                            <select name>
+                                                    <option value="Default" selected>
+                                                        Default
+                                                </option>
+                                                    <option value="Name">
+                                                        Name
+                                                    </option>
+                                                    <option value="Price">
+                                                        Price
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div className="limiter">
+                                                Show :
+                                            <select name>
+                                                    <option value={3} selected>
+                                                        3
+                                </option>
+                                                    <option value={6}>
+                                                        6
+                                </option>
+                                                    <option value={9}>
+                                                        9
+                                </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div className="pager">
+                                            <a href="#" className="prev-page">
+                                                <i className="fa fa-angle-left">
+                                                </i>
+                                            </a>
+                                            <a href="#" className="active">
+                                                1
                             </a>
-                        </div>
-                        </div>
-                        <div className="col-md-3 col-sm-6">
-                        <h4 className="title">
-                            Contact 
-                            <strong>
-                            Info
-                            </strong>
-                        </h4>
-                        <p>
-                            No. 08, Nguyen Trai, Hanoi , Vietnam
-                        </p>
-                        <p>
-                            Call Us : (084) 1900 1008
-                        </p>
-                        <p>
-                            Email : michael@leebros.us
-                        </p>
-                        </div>
-                        <div className="col-md-3 col-sm-6">
-                        <h4 className="title">
-                            Customer
-                            <strong>
-                            Support
-                            </strong>
-                        </h4>
-                        <ul className="support">
-                            <li>
-                            <a href="#">
-                                FAQ
+                                            <a href="#">
+                                                2
                             </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                Payment Option
+                                            <a href="#">
+                                                3
                             </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                Booking Tips
+                                            <a href="#" className="next-page">
+                                                <i className="fa fa-angle-right">
+                                                </i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    {this.state.listMode
+                                    ?
+                                    <ul className="products-listItem">
+                                        {this.generateProdcutList()}
+                                    </ul>
+                                    :
+                                    <div className='row'>
+                                        {this.generateProdcutGrid()}
+                                    </div>
+                                    }
+                                        
+                                    
+                                    <div className="toolbar">
+                                        <div className="sorter bottom">
+                                            <div className="view-mode">
+                                                <a href='' className={listBtnClass} onClick={e => { e.preventDefault();this.setState({ listMode: true });}}>
+                                                    List
+                                                </a>
+                                                <a href='' className={gridBtnClass} onClick={e => { e.preventDefault();this.setState({ listMode: false });}}>
+                                                    Grid
+                                                </a>
+                                            </div>
+                                            <div className="sort-by">
+                                                Sort by :
+                                <select name>
+                                                    <option value="Default" selected>
+                                                        Default
+                                </option>
+                                                    <option value="Name">
+                                                        Name
+                                </option>
+                                                    <option value="Price">
+                                                        Price
+                                </option>
+                                                </select>
+                                            </div>
+                                            <div className="limiter">
+                                                Show :
+                                <select name>
+                                                    <option value={3} selected>
+                                                        3
+                                </option>
+                                                    <option value={6}>
+                                                        6
+                                </option>
+                                                    <option value={9}>
+                                                        9
+                                </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div className="pager">
+                                            <a href="#" className="prev-page">
+                                                <i className="fa fa-angle-left">
+                                                </i>
+                                            </a>
+                                            <a href="#" className="active">
+                                                1
                             </a>
-                            </li>
-                            <li>
-                            <a href="#">
-                                Infomation
+                                            <a href="#">
+                                                2
                             </a>
-                            </li>
-                        </ul>
+                                            <a href="#">
+                                                3
+                            </a>
+                                            <a href="#" className="next-page">
+                                                <i className="fa fa-angle-right">
+                                                </i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div className="col-md-3">
-                        <h4 className="title">
-                            Get Our 
-                            <strong>
-                            Newsletter 
-                            </strong>
-                        </h4>
-                        <p>
-                            Lorem ipsum dolor ipsum dolor.
-                        </p>
-                        <form className="newsletter">
-                            <input type="text" name placeholder="Type your email...." />
-                            <input type="submit" defaultValue="SignUp" className="button" />
-                        </form>
-                        </div>
-                    </div>
+
                     </div>
                 </div>
-                <div className="copyright-info">
-                    <div className="container">
-                    <div className="row">
-                        <div className="col-md-6">
-                        <p>
-                            Copyright © 2012. Designed by 
-                            <a href="#">
-                            Michael Lee
-                            </a>
-                            . All rights reseved
-                        </p>
-                        </div>
-                        <div className="col-md-6">
-                        <ul className="social-icon">
-                            <li>
-                            <a href="#" className="linkedin">
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#" className="google-plus">
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#" className="twitter">
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#" className="facebook">
-                            </a>
-                            </li>
-                        </ul>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-                </div>
+
             </div>
         )
     }

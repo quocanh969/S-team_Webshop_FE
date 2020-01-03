@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
+import {us} from '../Services/UserService';
+import { history } from '../History/history';
 
 export default class Login extends Component {
   role = 0;
@@ -25,8 +27,14 @@ export default class Login extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-
-    console.log(this.user);
+    us.login({email:this.user.email, password: this.user.password, type: 0})
+    .then(res=>{
+      console.log(res);
+      if(res.info.code === 2) window.location.href = './home';
+    })
+    .catch(err=>{
+      console.log(err);
+    })
 
   }
 

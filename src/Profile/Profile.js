@@ -2,21 +2,22 @@ import React, { Component } from 'react';
 import { storage } from '../Firebase/firebase';
 
 import '../Detail.css';
+import { us } from '../Services/UserService';
 
 export default class Profile extends Component {
-    user = {
-        name: 'Trần Quốc Anh',
-        email: 'tranquocanh858@gmail.com',
-        dial: '0123456789',
-        address: 'Thành phố Hồ Chí Minh, VietNam',
-        banking: [],
-        banking_card: [],
-    };
-
+    
+    user;
     constructor(props) {
         super(props);   
 
         this.state = {
+            user: {
+                email: '',
+                dial: '',
+                address: '',              
+            },
+            banking: [],
+            invoice: [],
             tab: 1,
             isEditting: false,
             isBakingEditting: false,
@@ -27,58 +28,213 @@ export default class Profile extends Component {
     }
 
     componentDidMount() {
-        this.onReset();
+        this.initData();
+        this.initBankingData();
+        this.initInvoiceData();
+    }
+
+    initData() {
+        us.getUserById(JSON.parse(localStorage.getItem('user')).user.loginUser.id)
+        .then(res=>{
+            if(res.code === 1)
+            {
+                this.setState({user: res.info.data[0]});
+                this.user = this.state.user;
+            }
+        })
+        .catch(err=>{
+            console.log(err);
+        })
+    }
+
+    initBankingData() {
+        us.getBankingInfo(JSON.parse(localStorage.getItem('user')).user.loginUser.id)
+        .then(res=>{
+            if(res.code === 1)
+            {
+                this.setState({banking: res.info.data});
+            }
+        })
+        .catch(err=>{
+            console.log(err);
+        })
+    }
+
+    initInvoiceData() {
+        us.getInvoice(JSON.parse(localStorage.getItem('user')).user.loginUser.id)
+        .then(res=>{
+            if(res.code === 1)
+            {
+                this.setState({invoice: res.info.final});
+            }
+        })
+        .catch(err=>{
+            console.log(err);
+        })
     }
 
     handleChange(e)
     {
-        this.user[e.target.name] = e.target.value;
-        
+        let temp = this.state.user;
+        temp[e.target.name] = e.target.value;
+        this.setState({user: temp});
     }
 
     handleSubmit(e)
     {
         e.preventDefault();
-        // ls.updateLearnerDetail(this.tempUser)
-        // .then(res=>{
-        //     this.tempUser.isEditting = false;
-        //     this.setState({user: this.tempUser});
-        // })
-        // .catch(err=>{
-        //     console.log(err);
-        // })
-        console.log(this.user);
-    }
+        
+        us.updateInfo({
+            id: this.state.user.id,
+            email: this.state.user.email, 
+            password: this.state.user.password, 
+            dial: this.state.user.dial, 
+            address: this.state.user.address,
+            status: this.state.user.status,
+            type: 0,
+        })
+        .then(res=>{
+            if(res.code === 1)
+            {
+                alert('Update profile successfully');
 
-    
-    handleChangeAvatar(e)
-    {
-        this.image = e.target.files[0];
-        const uploadTask = storage.ref(`learner-avatar/${this.state.user.id}-${this.state.user.name}/${this.image.name}`).put(this.image);
-
-        uploadTask.on('state_changed',
-        ()=>{},
-        (error)=>{
-            alert('Upload image to server host get error ...');
-        },
-        ()=>{ // hoàn thành việc upload
-            storage.ref(`learner-avatar/${this.state.user.id}-${this.state.user.name}`).child(this.image.name).getDownloadURL()
-            .then(
-                (url)=>{                                           
-                    this.tempUser.avatarLink = url;
-                    this.setState({user: this.tempUser});
-                }
-            )
+                this.setState({isEditting: false});
+            }
+        })
+        .catch(err=>{
+            console.log(err);
         })
     }
 
+    generateBankingInfo() {
+        let content = [];
+        for(let e of this.state.banking)
+        {
+            content.push(
+                <div>
+                     <div className="row p-4 mt-2">
+                        <div className="col-2 text-center">
+                            <i className="fa fa-credit-card mx-1 p-3 bg-grey rounded-circle" style={{fontSize: 30}}></i>
+                        </div>
+                        <div className="col-7">
+                            <div className="row my-2 align-items-center">
+                                <div className='col-5 font-weight-bold font-15'>Card Number:</div>
+                                {/* <input className='col-7 font-weight-bold font-15' /> */}
+                                <div className='col-7 font-weight-bold font-15'>{e.cardNum}</div>
+                            </div>
+                            <div className="row my-3 align-items-center">
+                                <div className='col-5 font-weight-bold font-15'>Card Type:</div>
+                                <div className='col-7 font-weight-bold font-15'>Visa</div>
+                            </div>
+                        </div>
+                        <div className='col-3'>
+                            {/* {this.state.isBakingEditting
+                            ?
+                            <div className='d-flex justify-content-around'>
+                                <div className='btn btn-success cursor-pointer'>
+                                    Save
+                                </div>
+                                <div className='btn btn-secondary cursor-pointer'>
+                                    Exit
+                                </div>
+                            </div>
+                            :
+                            <div className='btn btn-danger cursor-pointer'>
+                                Edit
+                            </div>
+                            } */}
+                        </div>
+                    </div>
+                
+                    <hr className='border-secondary mx-4'></hr>
+                                      
+                </div>
+            );
+        }
+        return content;
+    }
+
+    generateDetailInvoice(list, total) {
+        let content = [];
+        for(let e of list)
+        {
+            content.push(
+                <tr>
+                    <th scope="row">1</th>
+                    <td>{e.productName}</td>
+                    <td>{total/e.curPrice}</td>
+                    <td>$&nbsp;{e.curPrice}</td>
+                </tr>
+            );
+        }
+        return content;
+    }
+
+    generateInvoiceInfo() {
+        let content = [];
+        for(let e of this.state.invoice)
+        {
+            content.push(
+                <div>
+                    <div className="p-4 font-15">
+                        
+                        <div className="row my-2">
+                            <div className='col-3 font-weight-bold'>
+                                Invoice ID:
+                            </div>
+                            <div className='col-9'>
+                                {e.id_invoice}
+                            </div>
+                        </div>
+                        
+                        <div className="row my-2">                                                
+                            <div className='col-6 row'>
+                                <span className='font-weight-bold col-6'>Create Date:</span> 
+                                <span className='col-6'>{e.createDate}</span>
+                            </div>
+                            <div className='col-6 row'>
+                                <span className='font-weight-bold col-6'>Delivery Date:</span> 
+                                <span className='col-6'>{e.deliveryDate}</span>
+                            </div>
+                        </div>
+                        <div className='font-weight-bold my-2'>Detail:</div>
+                        <div className='row mx-0'>
+                            <table className="table mx-2 font-weight-bold">
+                                <thead className="thead-dark">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Product</th>
+                                        <th scope="col">Quantity</th>
+                                        <th scope="col">Single Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {this.generateDetailInvoice(e.products, e.total)}
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <div className="row my-2">
+                            <div className='col-3 font-weight-bold'>
+                                Total:
+                            </div>
+                            <div className='col-9 text-danger font-weight-bold'>
+                                $&nbsp;{e.total}
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <hr className='border-secondary mx-4'></hr>
+                                        
+                </div>
+            );
+        }
+        return content;
+    }
 
     onReset()
     {     
-        this.refs.name.value = this.user.name;
-        this.refs.email.value = this.user.email;
-        this.refs.phone.value = this.user.dial;
-        this.refs.address.value = this.user.address;
+        this.setState({user:this.user});
     }
 
     render() {
@@ -127,33 +283,20 @@ export default class Profile extends Component {
             <div className="container emp-profile bg-dark">
                 <form ref='editProfileForm' onSubmit={this.handleSubmit}>
                     <div className="row">
-                        
                         <div className="col-md-4 mb-3">
                             <div className="profile-img mb-3">
                                 <img src={ImgSrc}
                                     alt="avatar-user" />
-                                <input type="file" name="file" ref="imgInput" className="d-none" onChange={this.handleChangeAvatar}/>
-                                {this.state.isEditting ?
-                                    <div className="file btn btn-lg btn-primary cursor-pointer"
-                                        onClick={() => { this.refs.imgInput.click() }}>
-                                        Change Photo
-                                    </div>
-                                : ''
-                                }
-                                
                             </div>
                         </div>
                         
                         <div className="col-md-8">
                             <div className="profile-head">
                                 <div className='row'>
-                                    <div className='col-8'>
-                                        <h5>
-                                            {/* {this.state.user.name.toUpperCase()} */}
+                                    <div className='col-8'>                                        
+                                        <h5 className="font-weight-bold text-white">
+                                            {this.state.user.email.toUpperCase()}
                                         </h5>
-                                        <h6 className="font-weight-bold">
-                                            CUSTOMER 's name
-                                        </h6>
                                     </div>
                                     <div className='col-4'>
                                         {this.state.isEditting ? 
@@ -165,7 +308,7 @@ export default class Profile extends Component {
                                                 <button className='btn btn-secondary h-100 w-49 font-weight-bold'                                                        
                                                         onClick={e=>{   
                                                             e.preventDefault(); 
-                                                            //this.setState({isEditting: true})     
+                                                            this.setState({isEditting: false})     
                                                             // this.tempUser.isEditting = false;        
                                                             // let temp = this.state.user;                                                             
                                                             // temp.isEditting = false;                                                            
@@ -179,7 +322,9 @@ export default class Profile extends Component {
                                         :   <button className='btn btn-secondary h-100 w-100 font-weight-bold' 
                                                     onClick={e=>{
                                                         e.preventDefault();
+                                                        
                                                         this.setState({isEditting: true})
+                                                        console.log(this.state.user);
                                                         // this.tempUser.isEditting = true;
                                                         // let temp = this.state.user;                         
                                                         // temp.isEditting = true;
@@ -220,21 +365,11 @@ export default class Profile extends Component {
                                 <div className={accountInfoClass} role="tabpanel" aria-labelledby="home-tab">
                                     <div className="row my-3 align-items-center">
                                         <div className="col-3">
-                                            <label className='text-white font-20'>Name</label>
-                                        </div>
-                                        <div className="col-9">
-                                            <input required className='w-75 border-light' type='text' name='name' disabled={disableVal} 
-                                                    ref='name'
-                                                    onChange={this.handleChange}/>
-                                        </div>
-                                    </div>
-                                    <div className="row my-3 align-items-center">
-                                        <div className="col-3">
                                             <label className='text-white font-20'>Email</label>
                                         </div>
                                         <div className="col-9">
                                             <input required className='w-75 border-light' type='email' name='email' disabled={disableVal} 
-                                                    ref='email'
+                                                    ref='email' value={this.state.user.email}
                                                     onChange={this.handleChange}/>
                                         </div>
                                     </div>
@@ -244,7 +379,7 @@ export default class Profile extends Component {
                                         </div>
                                         <div className="col-9">
                                             <input required className='w-75 border-light' type='text' name='address' disabled={disableVal} 
-                                                    ref='address'
+                                                    ref='address' value={this.state.user.address}
                                                     onChange={this.handleChange}/>
                                         </div>
                                     </div>
@@ -254,7 +389,7 @@ export default class Profile extends Component {
                                         </div>
                                         <div className="col-9">
                                             <input type="tel" required className='w-75 border-light' pattern="[0-9+]{10,11}" disabled={disableVal} name="phone" 
-                                                    ref='phone'
+                                                    ref='phone' value={this.state.user.dial}
                                                     onChange={this.handleChange}/>
                                         </div>
                                     </div>
@@ -262,244 +397,16 @@ export default class Profile extends Component {
                                 </div>
                                 
                                 <div className={historyInfoClass} role="tabpanel" aria-labelledby="profile-tab">
-
-                                    {/* user comment */}
                                     <div className="bg-light mx-auto py-2 mb-2 border-radius-10px">
-                                        <div className="row p-4 mt-2">
-                                            <div className="col-2 text-center">
-                                                <i className="fa fa-credit-card mx-1 p-3 bg-grey rounded-circle" style={{fontSize: 30}}></i>
-                                            </div>
-                                            <div className="col-7">
-                                                <div className="row my-2 align-items-center">
-                                                    <div className='col-5 font-weight-bold font-15'>Card Number:</div>
-                                                    {/* <input className='col-7 font-weight-bold font-15' /> */}
-                                                    <div className='col-7 font-weight-bold font-15'>012345678925</div>
-                                                </div>
-                                                <div className="row my-3 align-items-center">
-                                                    <div className='col-5 font-weight-bold font-15'>Card Type:</div>
-                                                    <div className='col-7 font-weight-bold font-15'>Visa</div>
-                                                </div>
-                                            </div>
-                                            <div className='col-3'>
-                                                {/* {this.state.isBakingEditting
-                                                ?
-                                                <div className='d-flex justify-content-around'>
-                                                    <div className='btn btn-success cursor-pointer'>
-                                                        Save
-                                                    </div>
-                                                    <div className='btn btn-secondary cursor-pointer'>
-                                                        Exit
-                                                    </div>
-                                                </div>
-                                                :
-                                                <div className='btn btn-danger cursor-pointer'>
-                                                    Edit
-                                                </div>
-                                                } */}
-                                            </div>
-                                        </div>
-                                    
-                                        <hr className='border-secondary mx-4'></hr>
-                                        
-                                        <div className="row p-4">
-                                            <div className="col-2 text-center">
-                                                <i className="fa fa-id-card mx-1 p-3 bg-grey rounded-circle" style={{fontSize: 30}}></i>
-                                            </div>
-                                            <div className="col-7">
-                                                <div className="row my-2">
-                                                    <div className='col-5 font-weight-bold font-15'>Card Number:</div>
-                                                    <div className='col-7 font-weight-bold font-15'>0125354984651</div>
-                                                </div>
-                                                <div className="row my-3">
-                                                    <div className='col-5 font-weight-bold font-15'>Card Type:</div>
-                                                    <div className='col-7 font-weight-bold font-15'>Visa</div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <hr className='border-secondary mx-4'></hr>
-
-                                        <div className="row p-4 mb-2">
-                                            <div className="col-2 text-center">
-                                                <i className="fa fa-address-card mx-1 p-3 bg-grey rounded-circle" style={{fontSize: 30}}></i>
-                                            </div>
-                                            <div className="col-7">
-                                                <div className="row my-2">
-                                                    <div className='col-5 font-weight-bold font-15'>Card Number:</div>
-                                                    <div className='col-7 font-weight-bold font-15'>0125354984651</div>
-                                                </div>
-                                                <div className="row my-3">
-                                                    <div className='col-5 font-weight-bold font-15'>Card Type:</div>
-                                                    <div className='col-7 font-weight-bold font-15'>Visa</div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        {this.generateBankingInfo()}
                                     </div>
-
                                 </div>
 
                                 <div className={invoiceInfoClass} role="tabpanel" aria-labelledby="profile-tab">
 
                                     {/* user comment */}
                                     <div className="bg-light mx-auto py-2 mb-2 border-radius-10px">
-
-                                    {/* {this.generateComments()} */}
-                                        <div className="p-4 font-15">
-                                            <div className="row my-2">
-                                                <div className='col-3 font-weight-bold'>
-                                                    Invoice ID:
-                                                </div>
-                                                <div className='col-9'>
-                                                    1
-                                                </div>
-                                            </div>
-                                            <div className="row my-2">                                                
-                                                <div className='col-6 row'>
-                                                    <span className='font-weight-bold col-6'>Create Date:</span> 
-                                                    <span className='col-6'>02/01/2020</span>
-                                                </div>
-                                                <div className='col-6 row'>
-                                                    <span className='font-weight-bold col-6'>Delivery Date:</span> 
-                                                    <span className='col-6'>03/01/2020</span>
-                                                </div>
-                                            </div>
-                                            <div className='font-weight-bold my-2'>Detail:</div>
-                                            <div className='row mx-0'>
-                                                <table className="table mx-2 font-weight-bold">
-                                                    <thead className="thead-dark">
-                                                        <tr>
-                                                            <th scope="col">#</th>
-                                                            <th scope="col">Product</th>
-                                                            <th scope="col">Quantity</th>
-                                                            <th scope="col">Single Price</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <th scope="row">1</th>
-                                                            <td>Túi Sách LV</td>
-                                                            <td>2</td>
-                                                            <td>$ 5000</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-
-                                            </div>
-                                            <div className="row my-2">
-                                                <div className='col-3 font-weight-bold'>
-                                                    Total:
-                                                </div>
-                                                <div className='col-9 text-danger font-weight-bold'>
-                                                    $ 100000
-                                                </div>
-                                            </div>
-                                            
-                                        </div>
-                                        <hr className='border-secondary mx-4'></hr>
-                                        <div className="p-4 font-15">
-                                            <div className="row my-2">
-                                                <div className='col-3 font-weight-bold'>
-                                                    Invoice ID:
-                                                </div>
-                                                <div className='col-9'>
-                                                    2
-                                                </div>
-                                            </div>
-                                            <div className="row my-2">
-                                                <div className='col-6 row'>
-                                                    <span className='font-weight-bold col-6'>Create Date:</span> 
-                                                    <span className='col-6'>02/01/2020</span>
-                                                </div>
-                                                <div className='col-6 row'>
-                                                    <span className='font-weight-bold col-6'>Delivery Date:</span> 
-                                                    <span className='col-6'>03/01/2020</span>
-                                                </div>
-                                            </div>
-                                            <div className='font-weight-bold my-2'>Detail:</div>
-                                            <div className='row mx-0'>
-                                                <table className="table mx-2 font-weight-bold">
-                                                    <thead className="thead-dark">
-                                                        <tr>
-                                                            <th scope="col">#</th>
-                                                            <th scope="col">Product</th>
-                                                            <th scope="col">Quantity</th>
-                                                            <th scope="col">Single Price</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <th scope="row">1</th>
-                                                            <td>Túi Sách LV</td>
-                                                            <td>2</td>
-                                                            <td>$ 5000</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-
-                                            </div>
-                                            <div className="row my-2">
-                                                <div className='col-3 font-weight-bold'>
-                                                    Total:
-                                                </div>
-                                                <div className='col-9 text-danger font-weight-bold'>
-                                                    $ 100000
-                                                </div>
-                                            </div>
-                                            
-                                        </div>
-                                        <hr className='border-secondary mx-4'></hr>
-                                        <div className="p-4 font-15">
-                                            <div className="row my-2">
-                                                <div className='col-3 font-weight-bold'>
-                                                    Invoice ID:
-                                                </div>
-                                                <div className='col-9'>
-                                                    3
-                                                </div>
-                                            </div>
-                                            <div className="row my-2">                                            
-                                                <div className='col-6 row'>
-                                                    <span className='font-weight-bold col-6'>Create Date:</span> 
-                                                    <span className='col-6'>02/01/2020</span>
-                                                </div>
-                                                <div className='col-6 row'>
-                                                    <span className='font-weight-bold col-6'>Delivery Date:</span> 
-                                                    <span className='col-6'>03/01/2020</span>
-                                                </div>
-                                            </div>
-                                            <div className='font-weight-bold my-2'>Detail:</div>
-                                            <div className='row mx-0'>
-                                                <table className="table mx-2 font-weight-bold">
-                                                    <thead className="thead-dark">
-                                                        <tr>
-                                                            <th scope="col">#</th>
-                                                            <th scope="col">Product</th>
-                                                            <th scope="col">Quantity</th>
-                                                            <th scope="col">Single Price</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <th scope="row">1</th>
-                                                            <td>Túi Sách LV</td>
-                                                            <td>2</td>
-                                                            <td>$ 5000</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-
-                                            </div>
-                                            <div className="row my-2">
-                                                <div className='col-3 font-weight-bold'>
-                                                    Total:
-                                                </div>
-                                                <div className='col-9 text-danger font-weight-bold'>
-                                                    $ 100000
-                                                </div>
-                                            </div>
-                                            
-                                        </div>
-                                        
+                                        {this.generateInvoiceInfo()}
                                     </div>
 {/* 
                                     

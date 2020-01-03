@@ -20,7 +20,7 @@
 }
 
 .font-15 {
-    font-size: 15px;
+    font-size: 15px !important;
 }
 
 .hide-down-arrow-dropdown::after {  
@@ -43,6 +43,10 @@
     border-radius: 10px;
 }
 
+.bg-f7e1f3 {
+    background-color: #f7e1f3 !important;
+}
+
 .bg-grey {
     background-color: #ada4a4 !important;
 }
@@ -59,4 +63,17 @@
 
 .no-margin {
     margin-left: 0px;
+}
+
+.product-image {
+    width: auto;
+}
+
+input:disabled {
+    background-color: lightgrey !important;
+}
+
+.checkout {
+    height: 100vh;
+    background-color: white !important;
 }

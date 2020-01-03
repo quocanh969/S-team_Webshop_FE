@@ -1,7 +1,13 @@
-const ApiUrl = "http://localhost:8081";
+const ApiUrl = "https://steamshop.herokuapp.com";
+//const ApiUrl = "http://localhost:8080";
 
 export const us = {
     login,
+    updateInfo,
+    getUserById,
+    getBankingInfo,
+    getInvoice,
+    checkout,
 }
 
 function login(user) {
@@ -14,16 +20,88 @@ function login(user) {
     return fetch(`${ApiUrl}/login`, requestOptions)
         .then(handleResponse)
         .then(res => {
-            console.log("login:");
-            console.log(res);
-            if (res !== false) {
+            
+            if (res.user !== false) {
+                let cart = [];
                 localStorage.setItem('user', JSON.stringify(res));
+                localStorage.setItem('cart', JSON.stringify(cart));
             }
 
             return res;
         });
 }
 
+function updateInfo(user) {
+    const requestOptions = {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(user),
+    };
+
+    return fetch(`${ApiUrl}/users`, requestOptions)
+        .then(handleResponse)
+        .then(res => {            
+            return res;
+        });
+}
+
+
+function getUserById(id) {
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({id: id}),
+    };
+
+    return fetch(`${ApiUrl}/getUsersById`, requestOptions)
+        .then(handleResponse)
+        .then(res => {            
+            return res;
+        });
+}
+
+
+function getBankingInfo(id) {
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({id: id}),
+    };
+
+    return fetch(`${ApiUrl}/bankingCard`, requestOptions)
+        .then(handleResponse)
+        .then(res => {            
+            return res;
+        });
+}
+
+function getInvoice(id) {
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({id_customer: id}),
+    };
+
+    return fetch(`${ApiUrl}/getInvoiceDetails`, requestOptions)
+        .then(handleResponse)
+        .then(res => {            
+            return res;
+        });
+}
+
+function checkout(newInvoice) {
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newInvoice),
+    };
+
+    return fetch(`${ApiUrl}/addInvoice`, requestOptions)
+        .then(handleResponse)
+        .then(res => {            
+            return res;
+        });
+}
 
 function handleResponse(response) {
     return response.text().then(text => {
