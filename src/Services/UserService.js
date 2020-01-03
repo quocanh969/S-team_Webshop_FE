@@ -8,6 +8,7 @@ export const us = {
     getBankingInfo,
     getInvoice,
     checkout,
+    updateBankingCard,
 }
 
 function login(user) {
@@ -97,6 +98,21 @@ function checkout(newInvoice) {
     };
 
     return fetch(`${ApiUrl}/addInvoice`, requestOptions)
+        .then(handleResponse)
+        .then(res => {            
+            return res;
+        });
+}
+
+
+function updateBankingCard(id, cardNum, cardType) {
+    const requestOptions = {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({id_user: id, cardNum: cardNum, cardType: cardType}),
+    };
+
+    return fetch(`${ApiUrl}/bankingCard`, requestOptions)
         .then(handleResponse)
         .then(res => {            
             return res;

@@ -16,7 +16,12 @@ export default class Profile extends Component {
                 dial: '',
                 address: '',              
             },
-            banking: [],
+            banking: {
+                id: 0,
+                id_user: 0,
+                cardNum: '',
+                type: 0,
+            },
             invoice: [],
             tab: 1,
             isEditting: false,
@@ -24,6 +29,7 @@ export default class Profile extends Component {
         }
 
         this.handleChange = this.handleChange.bind(this);
+        this.handleBankingChange = this.handleBankingChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
@@ -50,9 +56,11 @@ export default class Profile extends Component {
     initBankingData() {
         us.getBankingInfo(JSON.parse(localStorage.getItem('user')).user.loginUser.id)
         .then(res=>{
+            console.log('banking');
+            console.log(res);
             if(res.code === 1)
             {
-                this.setState({banking: res.info.data});
+                this.setState({banking: res.info.data[0]});
             }
         })
         .catch(err=>{
@@ -80,6 +88,12 @@ export default class Profile extends Component {
         this.setState({user: temp});
     }
 
+    handleBankingChange(e) {
+        let temp = this.state.banking;
+        temp.cardNum = e.target.value;
+        this.setState({banking: temp});
+    }
+
     handleSubmit(e)
     {
         e.preventDefault();
@@ -96,14 +110,24 @@ export default class Profile extends Component {
         .then(res=>{
             if(res.code === 1)
             {
-                alert('Update profile successfully');
-
-                this.setState({isEditting: false});
+                us.updateBankingCard(this.state.user.id, this.state.banking.cardNum, 0)
+                .then(res=>{
+                    if(res.code === 1)
+                    {
+                        alert('Update profile successfully');
+                        this.setState({isEditting: false});
+                    }
+                })
+                .catch(err=>{
+                    console.log(err);
+                })
             }
         })
         .catch(err=>{
             console.log(err);
         })
+
+
     }
 
     generateBankingInfo() {
@@ -159,7 +183,7 @@ export default class Profile extends Component {
         for(let e of list)
         {
             content.push(
-                <tr>
+                <tr key={e.id}>
                     <th scope="row">1</th>
                     <td>{e.productName}</td>
                     <td>{total/e.curPrice}</td>
@@ -252,16 +276,6 @@ export default class Profile extends Component {
         if (this.state.tab === 1) {
             accountInfoBtn = 'nav-link active cursor-pointer';
             accountInfoClass = 'tab-pane show active';
-            historyInfoBtn = 'nav-link cursor-pointer text-white';
-            historyInfoClass = 'tab-pane fade';
-            invoiceInfoBtn = 'nav-link cursor-pointer text-white';
-            invoiceInfoClass = 'tab-pane fade';
-        }
-        else if(this.state.tab === 2) {
-            accountInfoBtn = 'nav-link cursor-pointer text-white';
-            accountInfoClass = 'tab-pane fade';
-            historyInfoBtn = 'nav-link active cursor-pointer';
-            historyInfoClass = 'tab-pane show active';
             invoiceInfoBtn = 'nav-link cursor-pointer text-white';
             invoiceInfoClass = 'tab-pane fade';
         }
@@ -269,8 +283,6 @@ export default class Profile extends Component {
         {
             accountInfoBtn = 'nav-link cursor-pointer text-white';
             accountInfoClass = 'tab-pane fade';
-            historyInfoBtn = 'nav-link cursor-pointer text-white';
-            historyInfoClass = 'tab-pane fade';
             invoiceInfoBtn = 'nav-link active cursor-pointer';
             invoiceInfoClass = 'tab-pane show active';
         }
@@ -346,12 +358,6 @@ export default class Profile extends Component {
                                         >Personal Infomation</div>
                                     </li>
                                     <li className="nav-item">
-                                        <div className={historyInfoBtn} id="profile-tab" data-toggle="tab"
-                                            aria-controls="profile" aria-selected="false"
-                                            onClick={() => { this.setState({ tab: 2 }) }}
-                                        >Banking Infomation</div>
-                                    </li>
-                                    <li className="nav-item">
                                         <div className={invoiceInfoBtn} id="profile-tab" data-toggle="tab"
                                             aria-controls="profile" aria-selected="false"
                                             onClick={() => { this.setState({ tab: 3 }) }}
@@ -393,12 +399,15 @@ export default class Profile extends Component {
                                                     onChange={this.handleChange}/>
                                         </div>
                                     </div>
-                                    
-                                </div>
-                                
-                                <div className={historyInfoClass} role="tabpanel" aria-labelledby="profile-tab">
-                                    <div className="bg-light mx-auto py-2 mb-2 border-radius-10px">
-                                        {this.generateBankingInfo()}
+                                    <div className="row my-3 align-items-center">
+                                        <div className="col-3">
+                                            <label className='text-white font-20'>Card Number</label>
+                                        </div>
+                                        <div className="col-9">
+                                            <input required className='w-75 border-light' pattern="[0-9]{12}" type='text' name='card' disabled={disableVal} 
+                                                    value={this.state.banking.cardNum}
+                                                    onChange={this.handleBankingChange}/>
+                                        </div>
                                     </div>
                                 </div>
 

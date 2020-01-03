@@ -46,7 +46,6 @@ class App extends Component {
               <MyRoute path="/productlist" updateCartLength={()=>{this.updateCartLength()}} exact component={ProductList}></MyRoute>
               <MyRoute path="/productlist/id=:id" exact updateCartLength={()=>{this.updateCartLength()}} component={ProductList}></MyRoute>
               <MyRoute path="/productlist/query=:query" exact updateCartLength={()=>{this.updateCartLength()}} component={ProductList}></MyRoute>
-              <Route path="/detail" exact component={Detail}></Route>
               <MyRoute path="/detail/id=:id" updateCartLength={()=>{this.updateCartLength()}} exact component={Detail}></MyRoute>
               <MyRoute path="/cart" updateCartLength={()=>{this.updateCartLength()}} exact component={Cart}></MyRoute>
               <Route path="/contact" exact component={Contact}></Route>
