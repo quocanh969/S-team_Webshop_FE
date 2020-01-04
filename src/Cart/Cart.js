@@ -143,22 +143,7 @@ export default class Cart extends Component {
                 <div className="row shippingbox align-items-center">
 
                   <div className="col-8">
-                    <div className="subtotal">
-                      <h5>
-                        Sub Total
-                            </h5>
-                      <span>
-                        $1.000.00
-                            </span>
-                    </div>
-                    <div className="grandtotal">
-                      <h5>
-                        GRAND TOTAL
-                            </h5>
-                      <span>
-                        $1.000.00
-                            </span>
-                    </div>
+                    
 
                   </div>
                   <button className='col-4 w-100' style={{ fontSize: 25 }} onClick={()=>{history.push('/checkout')}}>
