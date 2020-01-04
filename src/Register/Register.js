@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
+import { us } from '../Services/UserService';
 
 export default class Register extends Component {
   user = {
@@ -16,12 +17,13 @@ export default class Register extends Component {
   constructor() {
     super();
 
+    this.state = {
+      status: 0,
+      message: '',
+    }
+
     this.handleSubmit = this.handleSubmit.bind(this); // handle submit
     this.handleChange = this.handleChange.bind(this);
-  }
-
-  componentWillMount() {
-    
   }
 
   componentDidMount() {
@@ -34,8 +36,51 @@ export default class Register extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    
+    us.register({
+      email: this.user.email,
+      password: this.user.password,
+      dial: this.user.phone,
+      address: this.user.address,
+      type: 0,
+    })
+    .then(res=>{
+      console.log(res);
+      if(res.code === 1)
+      {
+        this.refs.registerForm.reset();
+        this.setState({status: 2, message: 'Register success'});        
+      }
+      else
+      {
+        this.setState({status: 1, message: 'Register failed'});
+      }
+    })
+    .catch(err=>{
+      this.setState({status: 1, message: 'Error when connect to server'});
+    })
   }
+
+
+  generateNotice() {
+    if (this.state.status === 2) {// thành công
+      return (
+          <div className="alert alert-success my-3">
+              {this.state.message}
+          </div>
+      );
+    }
+    else if (this.state.status === 0) {
+        return ;
+    }
+    else {
+        return(
+          <div className="alert alert-danger my-3">
+              {this.state.message}
+          </div>
+        );
+    }
+  }
+
 
   render() {
     return (
@@ -78,6 +123,7 @@ export default class Register extends Component {
                       </button>
                     </form>
                     <hr className='border-light'></hr>
+                    {this.generateNotice()}
                     <div className="text-center">
                       <NavLink className="text-white font-15" to="/login">Already have an account? Login!</NavLink>
                     </div>

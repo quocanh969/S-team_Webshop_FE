@@ -13,6 +13,11 @@ export default class Login extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      status: 0,
+      message: '',
+    }
+
     this.handleSubmit = this.handleSubmit.bind(this); // handle submit
     this.handleChange = this.handleChange.bind(this);
   }
@@ -28,14 +33,41 @@ export default class Login extends Component {
   handleSubmit(e) {
     e.preventDefault();
     us.login({email:this.user.email, password: this.user.password, type: 0})
-    .then(res=>{
-      console.log(res);
-      if(res.info.code === 2) window.location.href = './home';
+    .then(res=>{      
+      if(res.info.code === 2) 
+      {
+        this.setState({status: 2, message: res.info.message});
+        window.location.href = './home';
+      }
+      else
+      {
+        this.setState({status: 1, message: res.info.message})
+      }
     })
     .catch(err=>{
-      console.log(err);
+      this.setState({status: 1, message: 'Error when connect to server'});
     })
 
+  }
+
+  generateNotice() {
+    if (this.state.status === 2) {// thành công
+      return (
+          <div className="alert alert-success my-3">
+              {this.state.message}
+          </div>
+      );
+    }
+    else if (this.state.status === 0) {
+        return ;
+    }
+    else {
+        return(
+          <div className="alert alert-danger my-3">
+              {this.state.message}
+          </div>
+        );
+    }
   }
 
   render() {
@@ -68,6 +100,7 @@ export default class Login extends Component {
                           </button>
                         </form>
                         <hr className='border-light'/>
+                        {this.generateNotice()}
                         <div className="text-center mt-3">
                           <NavLink className="text-white font-20" to="/register">Joint us!</NavLink>
                         </div>

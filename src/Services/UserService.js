@@ -3,6 +3,7 @@ const ApiUrl = "https://steamshop.herokuapp.com";
 
 export const us = {
     login,
+    register,
     updateInfo,
     getUserById,
     getBankingInfo,
@@ -28,6 +29,20 @@ function login(user) {
                 localStorage.setItem('cart', JSON.stringify(cart));
             }
 
+            return res;
+        });
+}
+
+function register(user) {
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(user)
+    };
+
+    return fetch(`${ApiUrl}/register`, requestOptions)
+        .then(handleResponse)
+        .then(res => {
             return res;
         });
 }
